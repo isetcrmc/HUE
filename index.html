@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hệ thống quan trắc ngập, vết lũ TP Huế</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.awesome-markers/dist/leaflet.awesome-markers.css"/>
+  <style>
+    body { margin:0; font-family:Calibri,sans-serif; }
+    #map { position:absolute; top:60px; bottom:0; right:0; left:0; }
+    .map-title {
+      position:fixed; top:10px; left:10px;
+      background:white; padding:10px 15px;
+      border-radius:8px; font-size:20px;
+      box-shadow:2px 2px 5px rgba(0,0,0,0.2); z-index:999;
+    }
+  </style>
+</head>
+<body>
+<div class="map-title">🛰️ Hệ thống quan trắc ngập, vết lũ TP Huế</div>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.js"></script>
+<script src="https://unpkg.com/leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+<script>
+const map = L.map('map').setView([16.4637, 107.5909], 11);
+const baseLayers = {
+  "Roadmap": L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}').addTo(map),
+  "Satellite": L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}')
+};
+
+const overlays = {"Vết lũ": {}, "Station": {}};
+
+function addFloodLayer(year, color) {
+  fetch('Flood_trace_all.geojson').then(r => r.json()).then(data => {
+    const layer = L.geoJSON(data, {
+      filter: f => f.properties[`VL${year}`],
+      pointToLayer: (f, latlng) =>
+        L.circleMarker(latlng, {
+          radius: map.getZoom() / 2,
+          fillColor: color,
+          color: "black",
+          weight: 1,
+          fillOpacity: 0.9
+        }),
+      onEachFeature: (f, l) => {
+        let p = f.properties;
+        let txt = `<b>Code:</b> ${p.Code}<br><b>ID:</b> ${p.ID}<br><b>Tên:</b> ${p.Name}<br>
+        <b>Địa điểm:</b> ${p.Commune} - ${p.District}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+        ['2020', '2022', '2023'].forEach(y => {
+          let v = p[`T10.${y}`] || p[`T11.${y}`];
+          if (v) txt += `<br><b>Độ sâu ${y}:</b> ${parseFloat(v).toFixed(2)} m`;
+        });
+        l.bindPopup(txt);
+      }
+    });
+    overlays["Vết lũ"][`Vết lũ ${year}`] = layer;
+    layer.addTo(map);
+  });
+}
+
+addFloodLayer('2020', '#FFA500');
+addFloodLayer('2022', '#FFFF00');
+addFloodLayer('2023', '#00FF00');
+
+const stationTypes = [["Tháp báo lũ", "pink"], ["Trạm đo H tự động", "blue"], ["Tháp cảnh báo ngập", "cadetblue"]];
+stationTypes.forEach(([type, color]) => {
+  fetch('Station.geojson').then(r => r.json()).then(data => {
+    const layer = L.geoJSON(data, {
+      filter: f => f.properties.Type === type,
+      pointToLayer: (f, latlng) => L.marker(latlng, {
+        icon: L.AwesomeMarkers.icon({
+          icon: 'flag', prefix: 'fa', markerColor: color
+        })
+      }),
+      onEachFeature: (f, l) => {
+        let p = f.properties;
+        let txt = `<b>${p.Name2}</b><br><b>Loại:</b> ${p.Type}<br>
+          <b>Địa điểm:</b> ${p.Name}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+        l.bindPopup(txt);
+      }
+    });
+    overlays["Station"][type] = layer;
+    layer.addTo(map);
+  });
+});
+
+L.control.groupedLayers(baseLayers, overlays, {
+  collapsed: false,
+  position: 'topleft'
+}).addTo(map);
+
+map.on("zoomend", () => {
+  let z = map.getZoom() / 2;
+  Object.values(overlays["Vết lũ"]).forEach(g => {
+    g.setStyle?.({radius: z});
+  });
+});
+</script>
+</body>
+</html>
