@@ -27,13 +27,13 @@ const overlays = { "Vết lũ": {}, "Trạm đo": {} };
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
   "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
-  "Trạm đo mực nước tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
+  "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
 };
 
-const reverseMap = {
+const displayName = {
   "Tháp báo lũ": "Tháp báo lũ",
-  "Tháp cảnh báo ngập": "Tháp báo ngập",
-  "Trạm đo mực nước tự động": "Trạm đo H tự động"
+  "Tháp cảnh báo ngập": "Tháp cảnh báo ngập",
+  "Trạm đo H tự động": "Trạm đo mực nước tự động"
 };
 
 function addFloodLayer(year, color) {
@@ -57,8 +57,8 @@ function addFloodLayer(year, color) {
         popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
 
         ['2020', '2022', '2023'].forEach(y => {
-          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`] || p[`T10.2020`] || p[`T11.2020`] || p[`'T10.2020'`] || p[`'T11.2020'`] || p[`T10_2020_`] || p[`T11_2020_`];
-          if (val && !isNaN(parseFloat(val))) {
+          let val = p[`T10_${y}_`] || p[`T11_${y}_`] || p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`];
+          if (val && !isNaN(val)) {
             popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
           }
         });
@@ -79,7 +79,7 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
   types.forEach(type => {
     const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='28' style='vertical-align:middle;margin-right:6px;'>`;
     const layer = L.geoJSON(data, {
-      filter: f => f.properties.Type === reverseMap[type],
+      filter: f => f.properties.Type === type,
       pointToLayer: (f, latlng) => L.marker(latlng, {
         icon: stationIcons[type]
       }),
@@ -90,7 +90,7 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
         l.bindPopup(popup);
       }
     });
-    overlays["Trạm đo"][`${iconHtml} ${type}`] = layer;
+    overlays["Trạm đo"][`${iconHtml} ${displayName[type]}`] = layer;
     layer.addTo(map);
   });
 });
