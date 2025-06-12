@@ -27,7 +27,7 @@ const overlays = { "Vết lũ": {}, "Trạm đo": {} };
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
   "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
-  "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
+  "Trạm đo mực nước tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
 };
 
 function addFloodLayer(year, color) {
@@ -48,7 +48,8 @@ function addFloodLayer(year, color) {
         if (p.Commune || p.District) {
           popup += `<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}`;
         }
-        popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
+        popup += `<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+
         ['2020', '2022', '2023'].forEach(y => {
           let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`];
           if (val && !isNaN(val)) {
@@ -70,7 +71,7 @@ addFloodLayer('2023', 'limegreen');
 fetch("Station.geojson").then(res => res.json()).then(data => {
   const types = Object.keys(stationIcons);
   types.forEach(type => {
-    const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='18' style='vertical-align:middle;margin-right:6px;'>`;
+    const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='24' style='vertical-align:middle;margin-right:6px;'>`;
     const layer = L.geoJSON(data, {
       filter: f => f.properties.Type === type,
       pointToLayer: (f, latlng) => L.marker(latlng, {
@@ -78,7 +79,11 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
       }),
       onEachFeature: (f, l) => {
         const p = f.properties;
-        const popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
+        let popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}`;
+        if (p.Commune || p.District) {
+          popup += `<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}`;
+        }
+        popup += `<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
         l.bindPopup(popup);
       }
     });
