@@ -23,17 +23,17 @@ function switchBase(type) {
 
 const overlays = { "Vết lũ": {}, "Trạm đo": {} };
 
-const displayName = {
-  "Tháp báo lũ": "Tháp báo lũ",
-  "Tháp cảnh báo ngập": "Tháp báo ngập",
-  "Trạm đo H tự động": "Trạm đo mực nước tự động"
-};
-
 // ICON tùy chỉnh dạng thước kẻ SVG (tăng kích thước icon)
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
   "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
-  "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
+  "Trạm đo mực nước tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
+};
+
+const reverseMap = {
+  "Tháp báo lũ": "Tháp báo lũ",
+  "Tháp cảnh báo ngập": "Tháp báo ngập",
+  "Trạm đo mực nước tự động": "Trạm đo H tự động"
 };
 
 function addFloodLayer(year, color) {
@@ -57,8 +57,8 @@ function addFloodLayer(year, color) {
         popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
 
         ['2020', '2022', '2023'].forEach(y => {
-          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`] || p[`T10.2020`] || p[`T11.2020`] || p[`'T10.2020'`] || p[`'T11.2020'`] || p[`T10_2020_`] || p[`T11_2020_`];
-          if (val && !isNaN(parseFloat(val))) {
+          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`] || p[`T10.2020`] || p[`T11.2020`] || p[`'T10.2020'`] || p[`'T11.2020'`];
+          if (val && !isNaN(val)) {
             popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
           }
         });
@@ -77,21 +77,20 @@ addFloodLayer('2023', 'limegreen');
 fetch("Station.geojson").then(res => res.json()).then(data => {
   const types = Object.keys(stationIcons);
   types.forEach(type => {
-    const name = displayName[type] || type;
     const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='28' style='vertical-align:middle;margin-right:6px;'>`;
     const layer = L.geoJSON(data, {
-      filter: f => f.properties.Type === type,
+      filter: f => f.properties.Type === reverseMap[type],
       pointToLayer: (f, latlng) => L.marker(latlng, {
         icon: stationIcons[type]
       }),
       onEachFeature: (f, l) => {
         const p = f.properties;
-        let popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${name}`;
+        let popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}`;
         popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
         l.bindPopup(popup);
       }
     });
-    overlays["Trạm đo"][`${iconHtml} ${name}`] = layer;
+    overlays["Trạm đo"][`${iconHtml} ${type}`] = layer;
     layer.addTo(map);
   });
 });
