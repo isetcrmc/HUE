@@ -26,13 +26,13 @@ const overlays = { "Vết lũ": {}, "Trạm đo": {} };
 // ICON tùy chỉnh dạng thước kẻ SVG (tăng kích thước icon)
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
-  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
+  "Tháp báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
   "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
 };
 
 const displayName = {
   "Tháp báo lũ": "Tháp báo lũ",
-  "Tháp cảnh báo ngập": "Tháp cảnh báo ngập",
+  "Tháp báo ngập": "Tháp cảnh báo ngập",
   "Trạm đo H tự động": "Trạm đo mực nước tự động"
 };
 
