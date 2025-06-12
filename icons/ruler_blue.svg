@@ -13,10 +13,10 @@
 	<rect x="278.756" y="409.6" style="fill:#3C5D76;" width="62.578" height="34.133"/>
 </g>
 <g>
-	<rect x="170.667" y="136.533" style="fill:#78B9EB;" width="62.578" height="34.133"/>
-	<rect x="170.667" y="204.8" style="fill:#78B9EB;" width="62.578" height="34.133"/>
-	<rect x="170.667" y="273.067" style="fill:#78B9EB;" width="62.578" height="34.133"/>
-	<rect x="170.667" y="341.333" style="fill:#78B9EB;" width="62.578" height="34.133"/>
-	<rect x="170.667" y="409.6" style="fill:#78B9EB;" width="62.578" height="34.133"/>
+	<rect x="170.667" y="136.533" style="fill:##2C7BC1;" width="62.578" height="34.133"/>
+	<rect x="170.667" y="204.8" style="fill:##2C7BC1;" width="62.578" height="34.133"/>
+	<rect x="170.667" y="273.067" style="fill:##2C7BC1;" width="62.578" height="34.133"/>
+	<rect x="170.667" y="341.333" style="fill:##2C7BC1;" width="62.578" height="34.133"/>
+	<rect x="170.667" y="409.6" style="fill:##2C7BC1;" width="62.578" height="34.133"/>
 </g>
 </svg>
