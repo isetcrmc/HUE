@@ -3,7 +3,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
 	 viewBox="0 0 512 512" xml:space="preserve">
 <path style="fill:#C9E3F7;" d="M341.333,512H170.667V0h170.667V512z"/>
-<path style="fill:#78B9EB;" d="M341.333,512H256V0h85.333V512z"/>
+<path style="fill:#3F91CE;" d="M341.333,512H256V0h85.333V512z"/>
 <circle style="fill:#FFFFFF;" cx="256" cy="79.644" r="17.067"/>
 <g>
 	<rect x="278.756" y="136.533" style="fill:#3C5D76;" width="62.578" height="34.133"/>
