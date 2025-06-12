@@ -44,7 +44,11 @@ function addFloodLayer(year, color) {
       }),
       onEachFeature: (f, l) => {
         let p = f.properties;
-        let popup = `<b>Tên vết lũ:</b> ${p.Name || ''}<br><b>ID:</b> ${p.ID || ''}<br><b>Code:</b> ${p.Code || ''}<br><b>Địa điểm:</b> ${p.Commune || ''}, ${p.District || ''}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+        let popup = `<b>Tên vết lũ:</b> ${p.Name || ''}<br><b>ID:</b> ${p.ID || ''}<br><b>Code:</b> ${p.Code || ''}`;
+        if (p.Commune || p.District) {
+          popup += `<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}`;
+        }
+        popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
         ['2020', '2022', '2023'].forEach(y => {
           let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`];
           if (val && !isNaN(val)) {
@@ -74,7 +78,7 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
       }),
       onEachFeature: (f, l) => {
         const p = f.properties;
-        const popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+        const popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
         l.bindPopup(popup);
       }
     });
