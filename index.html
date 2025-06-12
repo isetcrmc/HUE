@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <title>Hệ thống Giám sát Ngập lụt Thành phố Huế</title>
+  <title>Hệ thống Giám sát Ngập lụt thành phố Huế</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.awesome-markers/dist/leaflet.awesome-markers.css" />
@@ -25,44 +25,46 @@
       z-index: 999;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-    .leaflet-control-layers { font-size: 14px; }
-    .mapbox-control {
+    .leaflet-control-layers {
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .basemap-control {
       position: absolute;
       top: 70px;
       right: 10px;
-      z-index: 1000;
       background: white;
       border-radius: 6px;
       box-shadow: 0 1px 5px rgba(0,0,0,0.3);
       overflow: hidden;
+      z-index: 1000;
     }
-    .mapbox-button {
+    .basemap-button {
       display: flex;
       align-items: center;
       padding: 6px 10px;
       border-bottom: 1px solid #ccc;
       cursor: pointer;
     }
-    .mapbox-button img {
-      width: 22px;
-      height: 22px;
+    .basemap-button img {
+      width: 20px;
+      height: 20px;
       margin-right: 8px;
     }
-    .mapbox-button:last-child { border-bottom: none; }
-    .mapbox-button:hover {
+    .basemap-button:hover {
       background-color: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <div class="header-bar">🛰️ Hệ thống Giám sát Ngập lụt tỉnh Thừa Thiên Huế</div>
+  <div class="header-bar">🛰️ Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
   <div id="map"></div>
-  <div class="mapbox-control">
-    <div class="mapbox-button" onclick="switchBase('default')">
+  <div class="basemap-control">
+    <div class="basemap-button" onclick="switchBase('roadmap')">
       <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Google_Maps_icon_%282020%29.svg">
-      Default
+      Road map
     </div>
-    <div class="mapbox-button" onclick="switchBase('satellite')">
+    <div class="basemap-button" onclick="switchBase('satellite')">
       <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Google_Earth_icon.svg">
       Satellite
     </div>
