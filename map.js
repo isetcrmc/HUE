@@ -70,27 +70,31 @@ addFloodLayer('2023', 'limegreen');
 
 fetch("Station.geojson").then(res => res.json()).then(data => {
   const types = Object.keys(stationIcons);
-  const displayName = {
+  const displayName = { 
   "Tháp báo lũ": "Tháp báo lũ",
+  "Tháp cảnh báo ngập": "Tháp báo ngập",
   "Trạm đo H tự động": "Trạm đo mực nước tự động"
 };
-  types.forEach(type => {
-    const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='28' style='vertical-align:middle;margin-right:6px;'>`;
-    const layer = L.geoJSON(data, {
-      filter: f => f.properties.Type === type,
-      pointToLayer: (f, latlng) => L.marker(latlng, {
-        icon: stationIcons[type]
-      }),
-      onEachFeature: (f, l) => {
-        const p = f.properties;
-        let popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type || ''}`;
-        popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
-        l.bindPopup(popup);
-      }
+  const types = Object.keys(stationIcons);
+types.forEach(type => {
+  const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='28' style='vertical-align:middle;margin-right:6px;'>`;
+  const layer = L.geoJSON(data, {
+    filter: f => f.properties.Type === type,
+    pointToLayer: (f, latlng) => L.marker(latlng, {
+      icon: stationIcons[type]
+    }),
+    onEachFeature: (f, l) => {
+      const p = f.properties;
+      let popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${displayName[type] || type}`;
+      popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
+      l.bindPopup(popup);
+    }
   });
-    overlays["Trạm đo"][`${iconHtml} ${displayName[type]}`] = layer;
-    layer.addTo(map);
-  });
+
+  // ✅ Dùng displayName ở đây để tránh undefined
+  overlays["Trạm đo"][`${iconHtml} ${displayName[type] || type}`] = layer;
+  layer.addTo(map);
+});
 });
 
 setTimeout(() => {
