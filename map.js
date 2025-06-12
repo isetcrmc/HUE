@@ -66,6 +66,7 @@ addFloodLayer('2023', 'limegreen');
 fetch("Station.geojson").then(res => res.json()).then(data => {
   const types = Object.keys(stationIcons);
   types.forEach(type => {
+    const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='14' style='vertical-align:middle;margin-right:6px;'>`;
     const layer = L.geoJSON(data, {
       filter: f => f.properties.Type === type,
       pointToLayer: (f, latlng) => L.marker(latlng, {
@@ -77,7 +78,7 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
         l.bindPopup(popup);
       }
     });
-    overlays["Trạm đo"][type] = layer;
+    overlays["Trạm đo"][`${iconHtml} ${type}`] = layer;
     layer.addTo(map);
   });
 });
