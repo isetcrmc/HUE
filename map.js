@@ -72,7 +72,6 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
   const types = Object.keys(stationIcons);
   const displayName = {
   "Tháp báo lũ": "Tháp báo lũ",
-  "Tháp báo ngập": "Tháp cảnh báo ngập",
   "Trạm đo H tự động": "Trạm đo mực nước tự động"
 };
   types.forEach(type => {
