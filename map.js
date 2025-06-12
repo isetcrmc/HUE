@@ -25,9 +25,9 @@ const overlays = { "Vết lũ": {}, "Trạm đo": {} };
 
 // ICON tùy chỉnh dạng thước kẻ SVG (tăng kích thước icon)
 const stationIcons = {
-  "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
-  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
-  "Trạm đo mực nước tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
+  "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [24, 24] }),
+  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [24, 24] }),
+  "Trạm đo mực nước tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [24, 24] })
 };
 
 function addFloodLayer(year, color) {
