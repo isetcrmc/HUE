@@ -1,4 +1,3 @@
-
 // map.js (đã chỉnh sửa đẹp hơn & đầy đủ)
 
 const map = L.map('map').setView([16.4637, 107.5909], 11);
@@ -28,15 +27,14 @@ function addFloodLayer(year, color) {
         fillOpacity: 0.85
       }),
       onEachFeature: (f, l) => {
-        let p = f.properties;
-        let popup = `<b>${p.Name}</b><br><b>Code:</b> ${p.Code}<br><b>Địa điểm:</b> ${p.Commune}, ${p.District}<br><b>Tọa độ:</b> ${p.X}, ${p.Y>`;
+        const p = f.properties;
+        let popup = `<b>${p.Name || ""}</b><br><b>Code:</b> ${p.Code || ""}<br><b>Địa điểm:</b> ${p.Commune || ""}, ${p.District || ""}<br><b>Tọa độ:</b> ${p.X || ""}, ${p.Y || ""}`;
         ['2020', '2022', '2023'].forEach(y => {
-  let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`];
-  if (val && !isNaN(parseFloat(val))) {
-    popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
-  }
-});
-
+          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`];
+          if (val && !isNaN(parseFloat(val))) {
+            popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
+          }
+        });
         l.bindPopup(popup);
       }
     });
@@ -71,7 +69,7 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
       }),
       onEachFeature: (f, l) => {
         const p = f.properties;
-        const popup = `<b>${p.Name2 || p.Name}</b><br><b>Loại:</b> ${p.Type}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+        const popup = `<b>${p.Name2 || p.Name || ""}</b><br><b>Loại:</b> ${p.Type || ""}<br><b>Tọa độ:</b> ${p.X || ""}, ${p.Y || ""}`;
         l.bindPopup(popup);
       }
     });
@@ -80,7 +78,7 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
   });
 });
 
-// Load group control (phải đúng thư viện leaflet.groupedlayercontrol)
+// Load group control
 setTimeout(() => {
   if (L.control.groupedLayers) {
     L.control.groupedLayers(baseLayers, overlays, {
