@@ -1,6 +1,10 @@
 // map.js - nâng cấp logic & giao diện đầy đủ
 
-const map = L.map('map').setView([16.4637, 107.5909], 11);
+const map = L.map('map', {
+  zoomControl: false
+}).setView([16.4637, 107.5909], 11);
+
+L.control.zoom({ position: 'bottomright' }).addTo(map);
 
 let baseRoad = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', { attribution: "Google" });
 let baseSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { attribution: "Google" });
@@ -21,9 +25,9 @@ const overlays = { "Vết lũ": {}, "Trạm đo": {} };
 
 // ICON tùy chỉnh dạng thước kẻ SVG
 const stationIcons = {
-  "Tháp báo lũ": L.icon({ iconUrl: 'ruler_black.svg', iconSize: [22, 22] }),
-  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'ruler_brown.svg', iconSize: [22, 22] }),
-  "Trạm đo H tự động": L.icon({ iconUrl: 'ruler_blue.svg', iconSize: [22, 22] })
+  "Tháp báo lũ": L.icon({ iconUrl: 'ruler_black.svg', iconSize: [20, 20] }),
+  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'ruler_brown.svg', iconSize: [20, 20] }),
+  "Trạm đo H tự động": L.icon({ iconUrl: 'ruler_blue.svg', iconSize: [20, 20] })
 };
 
 function addFloodLayer(year, color) {
@@ -31,15 +35,16 @@ function addFloodLayer(year, color) {
     const layer = L.geoJSON(data, {
       filter: f => f.properties[`VL${year}`],
       pointToLayer: (f, latlng) => L.circleMarker(latlng, {
-        radius: map.getZoom() / 2,
+        radius: 3.5,
         fillColor: color,
-        color: "#000",
-        weight: 1,
-        fillOpacity: 0.8
+        color: "#333",
+        weight: 0.5,
+        fillOpacity: 0.75,
+        className: 'flood-point'
       }),
       onEachFeature: (f, l) => {
         let p = f.properties;
-        let popup = `<b>${p.Name}</b><br><b>ID:</b> ${p.ID}<br><b>Code:</b> ${p.Code}<br><b>Địa điểm:</b> ${p.Commune}, ${p.District}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
+        let popup = `<b>Tên vết lũ:</b> ${p.Name}<br><b>ID:</b> ${p.ID}<br><b>Code:</b> ${p.Code}<br><b>Địa điểm:</b> ${p.Commune}, ${p.District}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
         ['2020', '2022', '2023'].forEach(y => {
           let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`];
           if (val && !isNaN(val)) {
@@ -89,7 +94,7 @@ setTimeout(() => {
 }, 1000);
 
 map.on("zoomend", () => {
-  const z = map.getZoom() / 2;
+  const z = Math.max(2.5, map.getZoom() / 2.2);
   Object.values(overlays["Vết lũ"]).forEach(layer => {
     layer.eachLayer(l => {
       if (l.setRadius) l.setRadius(z);
