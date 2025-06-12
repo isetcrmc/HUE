@@ -1,4 +1,5 @@
-// map.js (đã chỉnh sửa đẹp hơn & đầy đủ)
+
+// map.js (bản tối ưu biểu tượng + popup + fix khó click)
 
 const map = L.map('map').setView([16.4637, 107.5909], 11);
 
@@ -9,33 +10,34 @@ const baseLayers = {
 };
 baseLayers["Roadmap"].addTo(map);
 
-// Group overlay layers
+// Overlay nhóm
 const overlays = {
   "Vết lũ": {},
   "Trạm đo": {}
 };
 
+// Load vết lũ
 function addFloodLayer(year, color) {
   fetch("Flood_trace_all.geojson").then(res => res.json()).then(data => {
     const layer = L.geoJSON(data, {
       filter: f => f.properties[`VL${year}`],
       pointToLayer: (f, latlng) => L.circleMarker(latlng, {
-        radius: map.getZoom() / 2,
+        radius: 4,
         fillColor: color,
         color: "#000",
-        weight: 1,
+        weight: 0.5,
         fillOpacity: 0.85
       }),
       onEachFeature: (f, l) => {
         const p = f.properties;
-        let popup = `<b>${p.Name || ""}</b><br><b>Code:</b> ${p.Code || ""}<br><b>Địa điểm:</b> ${p.Commune || ""}, ${p.District || ""}<br><b>Tọa độ:</b> ${p.X || ""}, ${p.Y || ""}`;
+        let popup = `<b>${p.Name || ""}</b><br><b>ID:</b> ${p.Code || ""}<br><b>Địa điểm:</b> ${p.Commune || ""}, ${p.District || ""}<br><b>Tọa độ:</b> ${p.X || ""}, ${p.Y || ""}`;
         ['2020', '2022', '2023'].forEach(y => {
           let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`];
           if (val && !isNaN(parseFloat(val))) {
             popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
           }
         });
-        l.bindPopup(popup);
+        l.bindPopup(popup, { autoClose: false });
       }
     });
     overlays["Vết lũ"][`Năm ${year}`] = layer;
@@ -47,29 +49,32 @@ addFloodLayer('2020', 'orange');
 addFloodLayer('2022', 'gold');
 addFloodLayer('2023', 'limegreen');
 
-// Station
+// Load Station
 fetch("Station.geojson").then(res => res.json()).then(data => {
-  const types = ["Tháp báo lũ", "Trạm đo H tự động", "Tháp cảnh báo ngập"];
-  const colors = {
-    "Tháp báo lũ": "purple",
-    "Trạm đo H tự động": "navy",
-    "Tháp cảnh báo ngập": "teal"
+  const iconDefs = {
+    "Tháp báo lũ": L.AwesomeMarkers.icon({
+      icon: 'sliders', prefix: 'fa', markerColor: 'black', iconColor: 'white'
+    }),
+    "Trạm đo H tự động": L.AwesomeMarkers.icon({
+      icon: 'tint', prefix: 'fa', markerColor: 'blue', iconColor: 'white'
+    }),
+    "Tháp cảnh báo ngập": L.AwesomeMarkers.icon({
+      icon: 'exclamation-triangle', prefix: 'fa', markerColor: 'brown', iconColor: 'white'
+    })
   };
+
+  const types = Object.keys(iconDefs);
 
   types.forEach(type => {
     const layer = L.geoJSON(data, {
       filter: f => f.properties.Type === type,
       pointToLayer: (f, latlng) => L.marker(latlng, {
-        icon: L.AwesomeMarkers.icon({
-          icon: 'circle',
-          prefix: 'fa',
-          markerColor: colors[type],
-          iconColor: 'white'
-        })
+        icon: iconDefs[type],
+        riseOnHover: true
       }),
       onEachFeature: (f, l) => {
         const p = f.properties;
-        const popup = `<b>${p.Name2 || p.Name || ""}</b><br><b>Loại:</b> ${p.Type || ""}<br><b>Tọa độ:</b> ${p.X || ""}, ${p.Y || ""}`;
+        const popup = `<b>${p.Name2 || p.Name || ""}</b><br><b>Loại:</b> ${p.Type || ""}<br><b>Địa điểm:</b> ${p.Name || ""}<br><b>Tọa độ:</b> ${p.X || ""}, ${p.Y || ""}`;
         l.bindPopup(popup);
       }
     });
@@ -78,22 +83,16 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
   });
 });
 
-// Load group control
-setTimeout(() => {
-  if (L.control.groupedLayers) {
-    L.control.groupedLayers(baseLayers, overlays, {
-      collapsed: false,
-      position: "topleft"
-    }).addTo(map);
-  } else {
-    console.warn("Thiếu thư viện leaflet.groupedlayercontrol.js → không tạo được bảng layer!");
-  }
-}, 500);
+// Layer control
+L.control.groupedLayers(baseLayers, overlays, {
+  collapsed: false,
+  position: "topleft"
+}).addTo(map);
 
-// Cập nhật kích thước circle marker khi zoom
+// Co giãn marker circle theo zoom
 map.on("zoomend", () => {
-  const z = map.getZoom() / 2;
+  const z = map.getZoom();
   Object.values(overlays["Vết lũ"]).forEach(layer => {
-    if (layer.setStyle) layer.setStyle({ radius: z });
+    if (layer.setStyle) layer.setStyle({ radius: Math.max(2, z / 2.5) });
   });
 });
