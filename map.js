@@ -57,8 +57,8 @@ function addFloodLayer(year, color) {
         popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
 
         ['2020', '2022', '2023'].forEach(y => {
-          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`] || p[`T10.2020`] || p[`T11.2020`] || p[`'T10.2020'`] || p[`'T11.2020'`];
-          if (val && !isNaN(val)) {
+          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`] || p[`T10.2020`] || p[`T11.2020`] || p[`'T10.2020'`] || p[`'T11.2020'`] || p[`T10_2020_`] || p[`T11_2020_`];
+          if (val && !isNaN(parseFloat(val))) {
             popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
           }
         });
