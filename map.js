@@ -46,7 +46,7 @@ function addFloodLayer(year, color) {
         let p = f.properties;
         let popup = `<b>Tên vết lũ:</b> ${p.Name}<br><b>ID:</b> ${p.ID}<br><b>Code:</b> ${p.Code}<br><b>Địa điểm:</b> ${p.Commune}, ${p.District}<br><b>Tọa độ:</b> ${p.X}, ${p.Y}`;
         ['2020', '2022', '2023'].forEach(y => {
-          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`];
+          let val = p[`T10_${y}`] || p[`T11_${y}`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`];
           if (val && !isNaN(val)) {
             popup += `<br><b>Độ sâu ${y}:</b> ${parseFloat(val).toFixed(2)} m`;
           }
