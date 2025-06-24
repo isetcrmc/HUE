@@ -85,6 +85,7 @@
     <div class="filter">
       <label for="yearSelect">Chọn năm:</label>
       <select id="yearSelect">
+        <option value="all">Tất cả</option>
         <option value="2020">2020</option>
         <option value="2022">2022</option>
         <option value="2023" selected>2023</option>
@@ -94,44 +95,42 @@
   </div>
 
   <script>
-    const tableEl = document.getElementById("table");
-    const selectEl = document.getElementById("yearSelect");
-    let allData = [];
-    let headers = [];
+    const container = document.getElementById("table");
+    const yearSelect = document.getElementById("yearSelect");
+    let data = [];
 
     fetch("Flood_trace_all.geojson")
       .then(res => res.json())
       .then(json => {
-        allData = json.features || [];
-        if (allData.length > 0) {
-          headers = Object.keys(allData[0].properties);
-        }
-        renderTable(selectEl.value);
+        data = json.features || [];
+        renderTable(yearSelect.value);
       })
       .catch(() => {
-        tableEl.innerHTML = "Lỗi khi tải dữ liệu.";
+        container.innerHTML = "Lỗi khi tải dữ liệu.";
       });
 
-    selectEl.addEventListener("change", () => {
-      renderTable(selectEl.value);
+    yearSelect.addEventListener("change", e => {
+      renderTable(e.target.value);
     });
 
     function renderTable(year) {
-      const field = `VL${year}`;
-      const filtered = allData.filter(f => {
-        const val = f.properties?.[field];
-        return val !== null && val !== undefined && val !== "" && val !== "null";
+      const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
+
+      const filtered = data.filter(f => {
+        if (year === "all") return true;
+        const val = f.properties?.[`VL${year}`];
+        return val !== null && val !== undefined && val !== "" && val !== "0" && val !== "NULL";
       });
 
       let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
       filtered.forEach(f => {
         html += `<tr>` + headers.map(h => {
           const val = f.properties[h];
-          return `<td>${(val === null || val === "null" || val === undefined) ? "" : val}</td>`;
+          return `<td>${val ?? ""}</td>`;
         }).join("") + `</tr>`;
       });
       html += `</tbody></table>`;
-      tableEl.innerHTML = html;
+      container.innerHTML = html;
     }
   </script>
 </body>
