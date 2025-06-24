@@ -29,9 +29,13 @@
       padding: 0 18px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
     .header-buttons a {
       color: white;
-      margin-left: 12px;
       text-decoration: none;
       font-size: 16px;
       background: rgba(255, 255, 255, 0.2);
@@ -55,10 +59,11 @@
     }
     #map {
       flex: 1;
+      position: relative;
     }
     .mapbox-control {
-      position: fixed;
-      top: 70px;
+      position: absolute;
+      top: 10px;
       right: 10px;
       z-index: 1000;
       background: white;
@@ -89,10 +94,12 @@
 </head>
 <body>
   <div class="header-bar">
-    <div>📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
-    <div class="header-buttons">
-      <a href="index.html">Trang chủ</a>
-      <a href="detail.html">Dữ liệu chi tiết</a>
+    <div class="header-left">
+      <div>📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
+      <div class="header-buttons">
+        <a href="index.html">Trang chủ</a>
+        <a href="detail.html">Dữ liệu chi tiết</a>
+      </div>
     </div>
   </div>
 
@@ -133,7 +140,18 @@
         </details>
       </details>
     </div>
-    <div id="map"></div>
+    <div id="map">
+      <div class="mapbox-control">
+        <div class="mapbox-button" onclick="switchBase('default')">
+          <img src="icons/road_map.svg">
+          Road map
+        </div>
+        <div class="mapbox-button" onclick="switchBase('satellite')">
+          <img src="icons/satellite.svg">
+          Satellite
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
