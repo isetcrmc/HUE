@@ -19,32 +19,31 @@ function switchBase(type) {
 
 // Lưu trữ các lớp
 const layerMapping = {};
-window.layerMapping = layerMapping; // để dùng ngoài scope
+window.layerMapping = layerMapping;
 
-// Danh sách promise load dữ liệu
 const promises = [];
 
-// --- Ranh giới hành chính (phường) ---
+// Ranh giới hành chính (phường)
 promises.push(
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
     layerMapping["ward"] = L.geoJSON(data, {
-      style: { color: "#000", weight: 0.8, fillOpacity: 0 },
+      style: { color: '#1E90FF', weight: 1.2, fillOpacity: 0 },
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || ''}</b>`)
     });
   })
 );
 
-// --- Ranh giới cộng đồng ---
+// Ranh giới cộng đồng
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
-      style: { color: "#777", weight: 0.8, fillOpacity: 0 },
+      style: { color: '#FF8C00', weight: 1.2, fillOpacity: 0 },
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || ''}</b>`)
     });
   })
 );
 
-// --- Đỗ xe tránh ngập ---
+// Đỗ xe tránh ngập
 promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
     const fc1 = data.features.filter(f => f.properties.RoadType === "1 chiều");
@@ -54,19 +53,18 @@ promises.push(
   })
 );
 
-// --- Trạm đo mưa (Vrain) ---
+// Trạm đo mưa (Vrain)
 promises.push(
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
+    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [14, 14] });
     layerMapping["vrain"] = L.geoJSON(data, {
-      pointToLayer: (f, latlng) => L.marker(latlng, {
-        icon: L.icon({ iconUrl: 'icons/rain.svg', iconSize: [14, 14] })
-      }),
+      pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
     });
   })
 );
 
-// --- Flood trace theo năm ---
+// Vết lũ
 ["2020", "2022", "2023"].forEach((year, idx) => {
   const colors = ["orange", "gold", "limegreen"];
   const idKey = `flood${year}`;
@@ -98,7 +96,7 @@ promises.push(
   );
 });
 
-// --- Trạm đo các loại ---
+// Trạm đo các loại
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
   "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
@@ -122,7 +120,6 @@ promises.push(
   })
 );
 
-// Khi đã load xong hết => tạo Layer Control
 Promise.all(promises).then(() => {
   const groupedOverlays = {
     "Lớp bản đồ nền": {
