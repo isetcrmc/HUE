@@ -79,27 +79,56 @@
 
   <div class="content">
     <h2>Bảng dữ liệu vết lũ</h2>
+    <label for="yearFilter">Chọn năm:</label>
+    <select id="yearFilter">
+      <option value="all">Tất cả</option>
+      <option value="T10.2020">2020</option>
+      <option value="T10.2022">2022</option>
+      <option value="T10.2023">2023</option>
+    </select>
     <div id="table">Đang tải dữ liệu...</div>
   </div>
 
   <script>
-    fetch("Flood_trace_all.geojson")
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("table");
-        const features = data.features || [];
-        if (features.length === 0) {
-          container.innerHTML = "Không có dữ liệu.";
+    let rawFeatures = [];
+
+    function renderTable(features, selectedYear) {
+      const container = document.getElementById("table");
+      if (features.length === 0) {
+        container.innerHTML = "Không có dữ liệu.";
+        return;
+      }
+
+      const headers = Object.keys(features[0].properties);
+      let html = `<table><thead><tr>` + headers.map(h => `<th>${h}</th>`).join("") + `</tr></thead><tbody>`;
+
+      features.forEach(f => {
+        const props = f.properties;
+        const filteredProps = {};
+        headers.forEach(h => {
+          filteredProps[h] = props[h];
+        });
+
+        if (selectedYear !== "all" && (props[selectedYear] === undefined || props[selectedYear] === null)) {
           return;
         }
 
-        const headers = Object.keys(features[0].properties);
-        let html = `<table><thead><tr>` + headers.map(h => `<th>${h}</th>`).join("") + `</tr></thead><tbody>`;
-        features.forEach(f => {
-          html += `<tr>` + headers.map(h => `<td>${f.properties[h] !== undefined ? f.properties[h] : ''}</td>`).join("") + `</tr>`;
+        html += `<tr>` + headers.map(h => `<td>${filteredProps[h] !== null && filteredProps[h] !== undefined ? filteredProps[h] : ""}</td>`).join("") + `</tr>`;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
+
+    fetch("Flood_trace_all.geojson")
+      .then(res => res.json())
+      .then(data => {
+        rawFeatures = data.features || [];
+        renderTable(rawFeatures, "all");
+
+        document.getElementById("yearFilter").addEventListener("change", (e) => {
+          renderTable(rawFeatures, e.target.value);
         });
-        html += `</tbody></table>`;
-        container.innerHTML = html;
       })
       .catch(() => {
         document.getElementById("table").innerHTML = "Lỗi khi tải dữ liệu.";
