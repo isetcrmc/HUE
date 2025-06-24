@@ -82,7 +82,7 @@ promises.push(
 
     // Lớp đỗ xe 2 chiều
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '#0074D9', weight: 2, dashArray: '5,3' }
+      style: { color: '#8B4513', weight: 2, dashArray: '5,3' }
     });
   })
 );
