@@ -25,27 +25,28 @@
       font-size: 19px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 0 18px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
-    .header-left {
+    .nav-buttons {
+      background: #f5f5f5;
+      padding: 10px 18px;
       display: flex;
-      align-items: center;
-      gap: 16px;
+      gap: 12px;
+      border-bottom: 1px solid #ccc;
     }
-    .header-buttons a {
-      color: white;
+    .nav-buttons a {
+      color: #0074D9;
       text-decoration: none;
       font-size: 16px;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 5px 10px;
+      background: #e0eaff;
+      padding: 6px 12px;
       border-radius: 4px;
     }
     .main-container {
       display: flex;
       flex: 1;
-      height: calc(100vh - 60px);
+      height: calc(100vh - 100px);
     }
     #layerControl {
       width: 270px;
@@ -93,14 +94,10 @@
   </style>
 </head>
 <body>
-  <div class="header-bar">
-    <div class="header-left">
-      <div>📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
-      <div class="header-buttons">
-        <a href="index.html">Trang chủ</a>
-        <a href="detail.html">Dữ liệu chi tiết</a>
-      </div>
-    </div>
+  <div class="header-bar">📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
+  <div class="nav-buttons">
+    <a href="index.html">Trang chủ</a>
+    <a href="detail.html">Dữ liệu chi tiết</a>
   </div>
 
   <div class="main-container">
