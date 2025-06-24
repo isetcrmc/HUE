@@ -14,32 +14,51 @@
       color: #222;
       -webkit-font-smoothing: antialiased;
       text-shadow: 0.3px 0.3px #fff;
-    }
-    #map {
-      position: absolute;
-      top: 100px;
-      bottom: 0;
-      right: 0;
-      left: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
     .header-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
       height: 60px;
       background: #0074D9;
       color: white;
       font-size: 19px;
       display: flex;
       align-items: center;
-      padding-left: 18px;
-      z-index: 9999;
+      justify-content: space-between;
+      padding: 0 18px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .header-buttons a {
+      color: white;
+      margin-left: 12px;
+      text-decoration: none;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    .main-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+    }
+    #layerControl {
+      width: 270px;
+      background: #fff;
+      padding: 10px;
+      border-right: 1px solid #ccc;
+      font-family: Calibri;
+      font-size: 15px;
+      overflow-y: auto;
+      max-height: 100%;
+    }
+    #map {
+      flex: 1;
     }
     .mapbox-control {
       position: fixed;
-      top: 110px;
+      top: 70px;
       right: 10px;
       z-index: 1000;
       background: white;
@@ -69,61 +88,57 @@
   </style>
 </head>
 <body>
-  <div class="header-bar">📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
-  <div id="page-nav-placeholder" style="height:40px;"></div>
-  <div id="map"></div>
-
-  <div class="mapbox-control">
-    <div class="mapbox-button" onclick="switchBase('default')">
-      <img src="icons/road_map.svg">
-      Road map
-    </div>
-    <div class="mapbox-button" onclick="switchBase('satellite')">
-      <img src="icons/satellite.svg">
-      Satellite
+  <div class="header-bar">
+    <div>📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
+    <div class="header-buttons">
+      <a href="index.html">Trang chủ</a>
+      <a href="detail.html">Dữ liệu chi tiết</a>
     </div>
   </div>
 
-  <div id="layerControl" style="position:absolute; top:110px; left:10px; width:270px; background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); font-family:Calibri; font-size:15px; z-index:10000; overflow-y:auto; max-height:85vh">
-    <h3 style="margin-top:0; font-size:16px">Lớp bản đồ</h3>
+  <div class="main-container">
+    <div id="layerControl">
+      <h3 style="margin-top:0; font-size:16px">Lớp bản đồ</h3>
+      <details open>
+        <summary><b>Lớp bản đồ nền</b></summary>
+        <details open style="margin-left:15px">
+          <summary>Ranh giới hành chính</summary>
+          <label><input type="checkbox" data-layer="ward"> Ranh giới phường</label><br>
+          <label><input type="checkbox" data-layer="community"> Ranh giới cộng đồng</label>
+        </details>
+        <details open style="margin-left:15px">
+          <summary>Đỗ xe tránh ngập</summary>
+          <label><input type="checkbox" data-layer="do_xe_1"> Đỗ xe 1 chiều</label><br>
+          <label><input type="checkbox" data-layer="do_xe_2"> Đỗ xe 2 chiều</label>
+        </details>
+        <details open style="margin-left:15px">
+          <summary>Trạm quan trắc KTTV</summary>
+          <label><input type="checkbox" data-layer="tram_vrain"> Trạm Vrain</label>
+        </details>
+      </details>
 
-    <details open>
-      <summary><b>Lớp bản đồ nền</b></summary>
-      <details open style="margin-left:15px">
-        <summary>Ranh giới hành chính</summary>
-        <label><input type="checkbox" data-layer="ward"> Ranh giới phường</label><br>
-        <label><input type="checkbox" data-layer="community"> Ranh giới cộng đồng</label>
+      <details open>
+        <summary><b>Giám sát ngập lụt</b></summary>
+        <details open style="margin-left:15px">
+          <summary>Vết lũ</summary>
+          <label><input type="checkbox" data-layer="flood2020"> Năm 2020</label><br>
+          <label><input type="checkbox" data-layer="flood2022"> Năm 2022</label><br>
+          <label><input type="checkbox" data-layer="flood2023"> Năm 2023</label>
+        </details>
+        <details open style="margin-left:15px">
+          <summary>Trạm đo</summary>
+          <label><input type="checkbox" data-layer="ruler_black"> Tháp báo lũ</label><br>
+          <label><input type="checkbox" data-layer="ruler_brown"> Tháp cảnh báo ngập</label><br>
+          <label><input type="checkbox" data-layer="ruler_blue"> Trạm đo mực nước tự động</label>
+        </details>
       </details>
-      <details open style="margin-left:15px">
-        <summary>Đỗ xe tránh ngập</summary>
-        <label><input type="checkbox" data-layer="do_xe_1"> Đỗ xe 1 chiều</label><br>
-        <label><input type="checkbox" data-layer="do_xe_2"> Đỗ xe 2 chiều</label>
-      </details>
-      <details open style="margin-left:15px">
-        <summary>Trạm quan trắc KTTV</summary>
-        <label><input type="checkbox" data-layer="tram_vrain"> Trạm Vrain</label>
-      </details>
-    </details>
-
-    <details open>
-      <summary><b>Giám sát ngập lụt</b></summary>
-      <details open style="margin-left:15px">
-        <summary>Vết lũ</summary>
-        <label><input type="checkbox" data-layer="flood2020"> Năm 2020</label><br>
-        <label><input type="checkbox" data-layer="flood2022"> Năm 2022</label><br>
-        <label><input type="checkbox" data-layer="flood2023"> Năm 2023</label>
-      </details>
-      <details open style="margin-left:15px">
-        <summary>Trạm đo</summary>
-        <label><input type="checkbox" data-layer="ruler_black"> Tháp báo lũ</label><br>
-        <label><input type="checkbox" data-layer="ruler_brown"> Tháp cảnh báo ngập</label><br>
-        <label><input type="checkbox" data-layer="ruler_blue"> Trạm đo mực nước tự động</label>
-      </details>
-    </details>
+    </div>
+    <div id="map"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.6.0/leaflet.polylineDecorator.min.js"></script>
   <script src="map.js"></script>
   <script>
     document.querySelectorAll('#layerControl input[type=checkbox]').forEach(cb => {
