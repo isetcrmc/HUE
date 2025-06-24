@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.awesome-markers/dist/leaflet.awesome-markers.css" />
-  <link rel="stylesheet" href="leaflet.groupedlayercontrol.min.css" />
   <style>
     body {
       margin: 0;
@@ -67,37 +66,6 @@
     .mapbox-button:hover {
       background-color: #f0f0f0;
     }
-    .leaflet-control-layers-expanded {
-      position: fixed !important;
-      top: 110px !important;
-      left: 10px !important;
-      z-index: 999;
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-      font-size: 14px;
-      line-height: 1.4;
-    }
-    .leaflet-control-zoom {
-      right: 10px !important;
-      bottom: 10px !important;
-      top: auto !important;
-      left: auto !important;
-    }
-    .leaflet-control-layers label {
-      font-family: "Segoe UI", "Helvetica Neue", Calibri, sans-serif;
-      font-size: 14px;
-      padding: 4px 6px;
-      display: flex;
-      align-items: center;
-      line-height: 1.5;
-    }
-    .leaflet-control-layers label img {
-      vertical-align: middle;
-      margin-right: 6px;
-      width: 14px;
-      height: 14px;
-    }
   </style>
 </head>
 <body>
@@ -115,9 +83,61 @@
     </div>
   </div>
 
+  <!-- Điều khiển lớp bản đồ 3 cấp -->
+  <div id="layerControl" style="position:absolute; top:110px; left:10px; width:270px; background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); font-family:Calibri; font-size:15px; z-index:10000; overflow-y:auto; max-height:85vh">
+    <h3 style="margin-top:0; font-size:16px">Lớp bản đồ</h3>
+
+    <details open>
+      <summary><b>Lớp bản đồ nền</b></summary>
+      <details open style="margin-left:15px">
+        <summary>Ranh giới hành chính</summary>
+        <label><input type="checkbox" data-layer="ward"> Ranh giới phường</label><br>
+        <label><input type="checkbox" data-layer="community"> Ranh giới cộng đồng</label>
+      </details>
+      <details open style="margin-left:15px">
+        <summary>Giao thông</summary>
+        <label><input type="checkbox" data-layer="do_xe_1"> Đỗ xe 1 chiều</label><br>
+        <label><input type="checkbox" data-layer="do_xe_2"> Đỗ xe 2 chiều</label>
+      </details>
+      <details open style="margin-left:15px">
+        <summary>Trạm quan trắc KTTV</summary>
+        <label><input type="checkbox" data-layer="vrain"> Trạm đo mưa</label>
+      </details>
+    </details>
+
+    <details open>
+      <summary><b>Giám sát ngập lụt</b></summary>
+      <details open style="margin-left:15px">
+        <summary>Vết lũ</summary>
+        <label><input type="checkbox" data-layer="flood2020"> Năm 2020</label><br>
+        <label><input type="checkbox" data-layer="flood2022"> Năm 2022</label><br>
+        <label><input type="checkbox" data-layer="flood2023"> Năm 2023</label>
+      </details>
+      <details open style="margin-left:15px">
+        <summary>Trạm đo</summary>
+        <label><input type="checkbox" data-layer="ruler_black"> Tháp báo lũ</label><br>
+        <label><input type="checkbox" data-layer="ruler_brown"> Tháp cảnh báo ngập</label><br>
+        <label><input type="checkbox" data-layer="ruler_blue"> Trạm đo mực nước tự động</label>
+      </details>
+    </details>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
-  <script src="leaflet.groupedlayercontrol.min.js"></script>
   <script src="map.js"></script>
+  <script>
+    document.querySelectorAll('#layerControl input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', e => {
+        const layerId = e.target.getAttribute('data-layer');
+        const layer = window.layerMapping?.[layerId];
+        if (!layer) return;
+        if (e.target.checked) {
+          map.addLayer(layer);
+        } else {
+          map.removeLayer(layer);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
