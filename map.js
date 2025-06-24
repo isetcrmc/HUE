@@ -40,7 +40,7 @@ promises.push(
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
-      style: { color: '#cc6600', weight: 2, fillOpacity: 0, dashArray: '4,4' },
+      style: { color: '#FF4500', weight: 1.5, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
         l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
         l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
@@ -58,7 +58,7 @@ promises.push(
       style: { color: '#0a0', weight: 2, dashArray: '5,3' }
     });
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '#aa5500', weight: 2, dashArray: '5,3' }
+      style: { color: '#0000CD', weight: 2, dashArray: '5,3' }
     });
   })
 );
