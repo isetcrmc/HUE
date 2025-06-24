@@ -27,14 +27,20 @@ const promises = [];
 // --- Ranh giới hành chính (phường) ---
 promises.push(
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
-    layerMapping["ward"] = L.geoJSON(data);
+    layerMapping["ward"] = L.geoJSON(data, {
+      style: { color: "#000", weight: 0.8, fillOpacity: 0 },
+      onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || ''}</b>`)
+    });
   })
 );
 
 // --- Ranh giới cộng đồng ---
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
-    layerMapping["community"] = L.geoJSON(data);
+    layerMapping["community"] = L.geoJSON(data, {
+      style: { color: "#777", weight: 0.8, fillOpacity: 0 },
+      onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || ''}</b>`)
+    });
   })
 );
 
@@ -52,6 +58,9 @@ promises.push(
 promises.push(
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
     layerMapping["vrain"] = L.geoJSON(data, {
+      pointToLayer: (f, latlng) => L.marker(latlng, {
+        icon: L.icon({ iconUrl: 'icons/rain.svg', iconSize: [14, 14] })
+      }),
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
     });
   })
@@ -121,7 +130,7 @@ Promise.all(promises).then(() => {
       "Ranh giới phường": layerMapping.ward,
       "Ranh giới cộng đồng": layerMapping.community
     },
-    "Giao thông": {
+    "Đỗ xe tránh ngập": {
       "Đỗ xe 1 chiều": layerMapping.do_xe_1,
       "Đỗ xe 2 chiều": layerMapping.do_xe_2
     },
