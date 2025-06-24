@@ -17,15 +17,17 @@ function switchBase(type) {
   }
 }
 
+// Lưu trữ các lớp
 const layerMapping = {};
 window.layerMapping = layerMapping;
+
 const promises = [];
 
-// Ranh giới phường
+// Ranh giới hành chính (phường)
 promises.push(
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
     layerMapping["ward"] = L.geoJSON(data, {
-      style: { color: '#444', weight: 1, fillOpacity: 0, dashArray: '4,4' },
+      style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
         l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
         l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
@@ -38,7 +40,7 @@ promises.push(
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
-      style: { color: '#FF4500', weight: 2, fillOpacity: 0, dashArray: '4,4' },
+      style: { color: '#cc6600', weight: 2, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
         l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
         l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
@@ -52,12 +54,11 @@ promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
     const fc1 = data.features.filter(f => f.properties.RoadType === "Đỗ 1 chiều");
     const fc2 = data.features.filter(f => f.properties.RoadType === "Đỗ 2 chiều");
-    console.log("Đỗ 1 chiều:", fc1.length, "Đỗ 2 chiều:", fc2.length);
     layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 }, {
       style: { color: '#0a0', weight: 2, dashArray: '5,3' }
     });
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '#080', weight: 2, dashArray: '5,3' }
+      style: { color: '#aa5500', weight: 2, dashArray: '5,3' }
     });
   })
 );
@@ -73,7 +74,7 @@ promises.push(
   })
 );
 
-// Vết lũ theo năm
+// Vết lũ
 ["2020", "2022", "2023"].forEach((year, idx) => {
   const colors = ["orange", "gold", "limegreen"];
   const idKey = `flood${year}`;
@@ -105,10 +106,10 @@ promises.push(
   );
 });
 
-// Trạm đo thủ công
+// Trạm đo các loại
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [20, 20] }),
-  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [20, 20] }),
+  "Tháp báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [20, 20] }),
   "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [20, 20] })
 };
 
@@ -130,5 +131,5 @@ promises.push(
 );
 
 Promise.all(promises).then(() => {
-  console.log("✅ Tất cả lớp đã load xong.");
+  console.log("Tất cả lớp đã load xong.");
 });
