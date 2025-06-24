@@ -97,3 +97,12 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
     layerMapping[key] = layer;
   });
 });
+(function createNavBar() {
+  const nav = document.createElement("div");
+  nav.style = "position:fixed;top:60px;left:0;right:0;height:40px;background:#0074D9;color:#fff;display:flex;align-items:center;padding-left:15px;z-index:9999;font-family:Calibri;font-size:16px;gap:20px";
+  nav.innerHTML = `
+    <a href="index.html" style="color:white;text-decoration:none;font-weight:bold">Trang chủ</a>
+    <a href="detail.html" style="color:white;text-decoration:none;">Dữ liệu chi tiết</a>
+  `;
+  document.body.appendChild(nav);
+})();
