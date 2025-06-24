@@ -29,8 +29,8 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     .nav-buttons {
-      background: #f5f5f5;
-      padding: 10px 18px;
+      background: #f8f8f8;
+      padding: 8px 18px;
       display: flex;
       gap: 12px;
       border-bottom: 1px solid #ccc;
@@ -39,14 +39,14 @@
       color: #0074D9;
       text-decoration: none;
       font-size: 16px;
-      background: #e0eaff;
+      background: #e1ecf4;
       padding: 6px 12px;
       border-radius: 4px;
     }
     .main-container {
       display: flex;
       flex: 1;
-      height: calc(100vh - 100px);
+      height: calc(100vh - 60px - 42px);
     }
     #layerControl {
       width: 270px;
@@ -94,7 +94,9 @@
   </style>
 </head>
 <body>
-  <div class="header-bar">📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
+  <div class="header-bar">
+    📡 Hệ thống Giám sát Ngập lụt Thành phố Huế
+  </div>
   <div class="nav-buttons">
     <a href="index.html">Trang chủ</a>
     <a href="detail.html">Dữ liệu chi tiết</a>
@@ -113,7 +115,7 @@
         <details open style="margin-left:15px">
           <summary>Đỗ xe tránh ngập</summary>
           <label><input type="checkbox" data-layer="do_xe_1"> Đỗ xe 1 chiều</label><br>
-          <label><input type="checkbox" data-layer="do_xe_2"> Đỗ xe 2 chiều</label>
+          <label><input type="checkbox" data-layer="do_xe_2" style="color:#8B4513"> Đỗ xe 2 chiều</label>
         </details>
         <details open style="margin-left:15px">
           <summary>Trạm quan trắc KTTV</summary>
