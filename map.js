@@ -40,7 +40,7 @@ promises.push(
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
-      style: { color: '#FF4500', weight: 1.5, fillOpacity: 0, dashArray: '4,4' },
+      style: { color: '#FF8C00', weight: 2, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
         l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
         l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
@@ -52,13 +52,13 @@ promises.push(
 // Đỗ xe tránh ngập
 promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
-    const fc1 = data.features.filter(f => f.properties.RoadType === "Đỗ 1 chiều");
-    const fc2 = data.features.filter(f => f.properties.RoadType === "Đỗ 2 chiều");
+    const fc1 = data.features.filter(f => (f.properties.RoadType || '').trim() === "Đỗ 1 chiều");
+    const fc2 = data.features.filter(f => (f.properties.RoadType || '').trim() === "Đỗ 2 chiều");
     layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 }, {
       style: { color: '#0a0', weight: 2, dashArray: '5,3' }
     });
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '8B4513', weight: 2, dashArray: '5,3' }
+      style: { color: '#00BFFF', weight: 2, dashArray: '5,3' }
     });
   })
 );
