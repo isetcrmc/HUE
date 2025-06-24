@@ -118,22 +118,22 @@
     });
 
     function renderTable(year) {
-      const container = document.getElementById("table");
-      const filtered = allFeatures.filter(f => {
-        if (year === "all") return true;
-        return f.properties[`T10.${year}`] != null;
-      });
+  const container = document.getElementById("table");
+  const filtered = allFeatures.filter(f => {
+    if (year === "all") return true;
+    return f.properties[`VL${year}`] != null;
+  });
 
-      let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
-      filtered.forEach(f => {
-        html += `<tr>` + headers.map(h => {
-          const val = f.properties[h];
-          return `<td>${val == null ? "" : val}</td>`;
-        }).join("") + `</tr>`;
-      });
-      html += `</tbody></table>`;
-      container.innerHTML = html;
-    }
+  let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
+  filtered.forEach(f => {
+    html += `<tr>` + headers.map(h => {
+      const val = f.properties[h];
+      return `<td>${val == null ? "" : val}</td>`;
+    }).join("") + `</tr>`;
+  });
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
   </script>
 </body>
 </html>
