@@ -58,7 +58,7 @@ promises.push(
       style: { color: '#0a0', weight: 2, dashArray: '5,3' }
     });
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '#0000CD', weight: 2, dashArray: '5,3' }
+      style: { color: '8B4513', weight: 2, dashArray: '5,3' }
     });
   })
 );
