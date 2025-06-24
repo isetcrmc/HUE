@@ -52,8 +52,8 @@ promises.push(
 // Đỗ xe tránh ngập
 promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
-    const fc1 = data.features.filter(f => f.properties.RoadType === "Đỗ 1 chiều");
-    const fc2 = data.features.filter(f => f.properties.RoadType === "Đỗ 2 chiều");
+   const fc1 = data.features.filter(f => f.properties.RoadType?.trim() === "Đỗ 1 chiều");
+   const fc2 = data.features.filter(f => f.properties.RoadType?.trim() === "Đỗ 2 chiều");
     
     layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 }, {
       style: { color: '#0a0', weight: 2, dashArray: '5,3' },
