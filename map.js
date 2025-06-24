@@ -4,10 +4,10 @@ const currentPage = window.location.pathname.includes('detail') ? 'detail' : 'ho
 
 function createNavBar() {
   const nav = document.createElement("div");
-  nav.style = "position:fixed;top:50px;left:0;right:0;height:40px;background:#0074D9;color:#fff;display:flex;align-items:center;padding-left:15px;z-index:9999;font-family:Calibri;font-size:16px;gap:20px";
+  nav.style = "position:fixed;top:60px;left:0;right:0;height:40px;background:#0074D9;color:#fff;display:flex;align-items:center;padding-left:15px;z-index:9999;font-family:Calibri;font-size:16px;gap:20px";
   nav.innerHTML = `
-    <a href=\"index.html\" style=\"color:white;text-decoration:none;font-weight:${currentPage === 'home' ? 'bold' : 'normal'}\">Trang chủ</a>
-    <a href=\"detail.html\" style=\"color:white;text-decoration:none;font-weight:${currentPage === 'detail' ? 'bold' : 'normal'}\">Dữ liệu chi tiết</a>
+    <a href="index.html" style="color:white;text-decoration:none;font-weight:${currentPage === 'home' ? 'bold' : 'normal'}">Trang chủ</a>
+    <a href="detail.html" style="color:white;text-decoration:none;font-weight:${currentPage === 'detail' ? 'bold' : 'normal'}">Dữ liệu chi tiết</a>
   `;
   document.body.appendChild(nav);
 }
@@ -45,29 +45,22 @@ if (currentPage === 'home') {
     }
   };
 
-  // --- Ranh giới hành chính ---
+  // Ranh giới hành chính
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
-    const layer = L.geoJSON(data, {
-      onEachFeature: (f, l) => {
-        l.bindTooltip(f.properties.Name || '', { permanent: true, direction: 'center', className: 'ward-label' });
-      }
-    });
+    const layer = L.geoJSON(data);
     overlays["Lớp bản đồ nền"]["Ranh giới hành chính"]["Ranh giới phường"] = layer;
-    layer.addTo(map);
   });
 
   fetch("Community.geojson").then(res => res.json()).then(data => {
-    const layer = L.geoJSON(data, {
-      onEachFeature: (f, l) => {
-        l.bindTooltip(f.properties.Name || '', { permanent: true, direction: 'center', className: 'comm-label' });
-      }
-    });
+    const layer = L.geoJSON(data);
     overlays["Lớp bản đồ nền"]["Ranh giới hành chính"]["Ranh giới cộng đồng"] = layer;
-    layer.addTo(map);
   });
 
-  // --- Giao thông ---
+  // Giao thông
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
+    const doxeLayer = L.geoJSON(data);
+    overlays["Lớp bản đồ nền"]["Giao thông"]["Đỗ xe"] = doxeLayer;
+
     const types = {};
     data.features.forEach(f => {
       const type = f.properties.RoadType || "Khác";
@@ -76,23 +69,18 @@ if (currentPage === 'home') {
     });
     Object.entries(types).forEach(([type, features]) => {
       const layer = L.geoJSON({ type: 'FeatureCollection', features });
-      overlays["Lớp bản đồ nền"]["Giao thông"][`Đỗ xe - ${type}`] = layer;
-      layer.addTo(map);
+      overlays["Lớp bản đồ nền"]["Giao thông"][`Theo loại đường - ${type}`] = layer;
     });
   });
 
-  // --- Quan trắc KTTV ---
+  // Quan trắc KTTV
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
     const layer = L.geoJSON(data, {
-      onEachFeature: (f, l) => {
-        l.bindPopup(`<b>${f.properties.Ten || ''}</b>`);
-      }
+      onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
     });
-    overlays["Lớp bản đồ nền"]["Trạm quan trắc KTTV"]["Trạm đo mưa"] = layer;
-    layer.addTo(map);
+    overlays["Lớp bản đồ nền"]["Trạm quan trắc KTTV"]["Vrain"] = layer;
   });
 
-  // --- Vết lũ ---
   function addFloodLayer(year, color) {
     fetch("Flood_trace_all.geojson").then(res => res.json()).then(data => {
       const layer = L.geoJSON(data, {
@@ -102,8 +90,7 @@ if (currentPage === 'home') {
           fillColor: color,
           color: "#333",
           weight: 0.5,
-          fillOpacity: 0.75,
-          className: 'flood-point'
+          fillOpacity: 0.75
         }),
         onEachFeature: (f, l) => {
           let p = f.properties;
@@ -118,14 +105,13 @@ if (currentPage === 'home') {
         }
       });
       overlays["Giám sát ngập lụt"]["Vết lũ"][`Năm ${year}`] = layer;
-      layer.addTo(map);
     });
   }
   addFloodLayer('2020', 'orange');
   addFloodLayer('2022', 'gold');
   addFloodLayer('2023', 'limegreen');
 
-  // --- Trạm đo ---
+  // Trạm đo
   const stationIcons = {
     "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
     "Tháp báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
@@ -144,23 +130,19 @@ if (currentPage === 'home') {
         pointToLayer: (f, latlng) => L.marker(latlng, { icon: stationIcons[type] }),
         onEachFeature: (f, l) => {
           const p = f.properties;
-          let popup = `<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
-          l.bindPopup(popup);
+          l.bindPopup(`<b>${p.Name2 || p.Name || ''}</b><br><b>Loại:</b> ${p.Type}<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`);
         }
       });
       const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='28' style='vertical-align:middle;margin-right:6px;'>`;
       overlays["Giám sát ngập lụt"]["Trạm đo"][`${iconHtml} ${displayName[type]}`] = layer;
-      layer.addTo(map);
     });
   });
 
   setTimeout(() => {
-    if (L.control.groupedLayers) {
-      L.control.groupedLayers({}, overlays, {
-        collapsed: false,
-        position: "topleft"
-      }).addTo(map);
-    }
+    L.control.groupedLayers({}, overlays, {
+      collapsed: false,
+      position: "topleft"
+    }).addTo(map);
   }, 1000);
 
   map.on("zoomend", () => {
