@@ -27,8 +27,11 @@ const promises = [];
 promises.push(
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
     layerMapping["ward"] = L.geoJSON(data, {
-      style: { color: '#1E90FF', weight: 1.2, fillOpacity: 0 },
-      onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || ''}</b>`)
+      style: { color: '#1E90FF', weight: 0.8, fillOpacity: 0 },
+      onEachFeature: (f, l) => {
+        l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
+        l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+      }
     });
   })
 );
@@ -37,8 +40,11 @@ promises.push(
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
-      style: { color: '#FF8C00', weight: 1.2, fillOpacity: 0 },
-      onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Name || ''}</b>`)
+      style: { color: '#FF8C00', weight: 0.8, fillOpacity: 0 },
+      onEachFeature: (f, l) => {
+        l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
+        l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+      }
     });
   })
 );
@@ -56,7 +62,7 @@ promises.push(
 // Trạm đo mưa (Vrain)
 promises.push(
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
-    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [14, 14] });
+    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [12, 12] });
     layerMapping["vrain"] = L.geoJSON(data, {
       pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
@@ -121,35 +127,5 @@ promises.push(
 );
 
 Promise.all(promises).then(() => {
-  const groupedOverlays = {
-    "Lớp bản đồ nền": {
-      "Ranh giới hành chính": layerMapping.ward,
-      "Ranh giới phường": layerMapping.ward,
-      "Ranh giới cộng đồng": layerMapping.community
-    },
-    "Đỗ xe tránh ngập": {
-      "Đỗ xe 1 chiều": layerMapping.do_xe_1,
-      "Đỗ xe 2 chiều": layerMapping.do_xe_2
-    },
-    "Trạm quan trắc KTTV": {
-      "Trạm đo mưa": layerMapping.vrain
-    },
-    "Giám sát ngập lụt": {
-      "Vết lũ": {
-        "Năm 2020": layerMapping.flood2020,
-        "Năm 2022": layerMapping.flood2022,
-        "Năm 2023": layerMapping.flood2023
-      },
-      "Trạm đo": {
-        "Tháp báo lũ": layerMapping.ruler_black,
-        "Tháp cảnh báo ngập": layerMapping.ruler_brown,
-        "Trạm đo mực nước tự động": layerMapping.ruler_blue
-      }
-    }
-  };
-
-  L.control.groupedLayers(null, groupedOverlays, {
-    exclusiveGroups: [],
-    collapsed: false
-  }).addTo(map);
+  console.log("Tất cả lớp đã load xong.");
 });
