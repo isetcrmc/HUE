@@ -94,55 +94,43 @@
   </div>
 
   <script>
-  const container = document.getElementById("table");
-  const yearSelect = document.getElementById("yearSelect");
-  let data = [];
-  let headers = [];
+    const container = document.getElementById("table");
+    const yearSelect = document.getElementById("yearSelect");
+    let data = [];
+    let headers = [];
 
-  fetch("Flood_trace_all.geojson")
-    .then(res => res.json())
-    .then(json => {
-      data = json.features || [];
-      if (data.length > 0) {
-        headers = Object.keys(data[0].properties);
-        console.log("Headers có trong dữ liệu:", headers); // <== Xem debug ở console
-      }
+    fetch("Flood_trace_all.geojson")
+      .then(res => res.json())
+      .then(json => {
+        data = json.features || [];
+        headers = data.length > 0 ? Object.keys(data[0].properties) : [];
+        renderTable(yearSelect.value);
+      })
+      .catch(() => {
+        container.innerHTML = "Lỗi khi tải dữ liệu.";
+      });
+
+    yearSelect.addEventListener("change", () => {
       renderTable(yearSelect.value);
-    })
-    .catch(() => {
-      container.innerHTML = "Lỗi khi tải dữ liệu.";
     });
 
-  yearSelect.addEventListener("change", () => {
-    renderTable(yearSelect.value);
-  });
+    function renderTable(year) {
+      const field = `VL${year}`;
+      const filtered = data.filter(f => {
+        const val = f.properties?.[field];
+        return val !== null && val !== undefined && val !== "";
+      });
 
-  function renderTable(year) {
-  const field = headers.find(h => h.includes(year));
-  if (!field) {
-    container.innerHTML = `Không tìm thấy dữ liệu năm ${year}`;
-    return;
-  }
-
-  const filtered = data.filter(f => {
-    const val = f.properties?.[field];
-    return val !== null && val !== undefined && val !== "";
-  });
-
-  let html = `<table><thead><tr>
-    ${headers.map(h => `<th>${h}</th>`).join("")}
-  </tr></thead><tbody>`;
-
-  filtered.forEach(f => {
-    html += `<tr>` + headers.map(h => {
-      const val = f.properties[h];
-      return `<td>${val ?? ""}</td>`;
-    }).join("") + `</tr>`;
-  });
-
-  html += `</tbody></table>`;
-  container.innerHTML = html;
-}
-</script>
+      let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
+      filtered.forEach(f => {
+        html += `<tr>` + headers.map(h => {
+          const val = f.properties[h];
+          return `<td>${val ?? ""}</td>`;
+        }).join("") + `</tr>`;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
+  </script>
 </body>
 </html>
