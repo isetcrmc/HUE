@@ -27,7 +27,7 @@ const promises = [];
 promises.push(
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
     layerMapping["ward"] = L.geoJSON(data, {
-      style: { color: '#1E90FF', weight: 0.8, fillOpacity: 0 },
+      style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
         l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
         l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
@@ -40,7 +40,7 @@ promises.push(
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
-      style: { color: '#FF8C00', weight: 0.8, fillOpacity: 0 },
+      style: { color: '#FF8C00', weight: 0.8, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
         l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
         l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
@@ -54,16 +54,20 @@ promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
     const fc1 = data.features.filter(f => f.properties.RoadType === "1 chiều");
     const fc2 = data.features.filter(f => f.properties.RoadType === "2 chiều");
-    layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 });
-    layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 });
+    layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 }, {
+      style: { color: '#0a0', weight: 2, dashArray: '5,3' }
+    });
+    layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
+      style: { color: '#080', weight: 2, dashArray: '5,3' }
+    });
   })
 );
 
 // Trạm đo mưa (Vrain)
 promises.push(
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
-    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [12, 12] });
-    layerMapping["vrain"] = L.geoJSON(data, {
+    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [14, 14] });
+    layerMapping["tram_vrain"] = L.geoJSON(data, {
       pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
     });
@@ -104,9 +108,9 @@ promises.push(
 
 // Trạm đo các loại
 const stationIcons = {
-  "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
-  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
-  "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [28, 28] })
+  "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [20, 20] }),
+  "Tháp cảnh báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [20, 20] }),
+  "Trạm đo H tự động": L.icon({ iconUrl: 'icons/ruler_blue.svg', iconSize: [20, 20] })
 };
 
 promises.push(
