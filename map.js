@@ -91,7 +91,7 @@ promises.push(
 // Trạm đo mưa (Vrain)
 promises.push(
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
-    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [18, 18] });
+    const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [22, 22] });
     layerMapping["tram_vrain"] = L.geoJSON(data, {
       pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
