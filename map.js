@@ -52,13 +52,21 @@ promises.push(
 // Đỗ xe tránh ngập
 promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
-    const fc1 = data.features.filter(f => (f.properties.RoadType || '').trim() === "Đỗ 1 chiều");
-    const fc2 = data.features.filter(f => (f.properties.RoadType || '').trim() === "Đỗ 2 chiều");
+    const fc1 = data.features.filter(f => f.properties.RoadType === "Đỗ 1 chiều");
+    const fc2 = data.features.filter(f => f.properties.RoadType === "Đỗ 2 chiều");
+    
     layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 }, {
-      style: { color: '#0a0', weight: 2, dashArray: '5,3' }
+      style: { color: '#0a0', weight: 2, dashArray: '5,3' },
+      onEachFeature: (f, l) => {
+        const arrowHead = L.polylineDecorator(l, {
+          patterns: [{ offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({ pixelSize: 8, polygon: false, pathOptions: { stroke: true, color: '#0a0' } }) }]
+        });
+        arrowHead.addTo(map);
+      }
     });
+
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '#00BFFF', weight: 2, dashArray: '5,3' }
+      style: { color: '#0074D9', weight: 2, dashArray: '5,3' }
     });
   })
 );
@@ -67,7 +75,7 @@ promises.push(
 promises.push(
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
     const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [14, 14] });
-    layerMapping["vrain"] = L.geoJSON(data, {
+    layerMapping["tram_vrain"] = L.geoJSON(data, {
       pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
     });
