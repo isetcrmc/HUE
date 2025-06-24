@@ -68,6 +68,9 @@
     tr:nth-child(even) {
       background: #f9f9f9;
     }
+    .filter {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -79,60 +82,58 @@
 
   <div class="content">
     <h2>Bảng dữ liệu vết lũ</h2>
-    <label for="yearFilter">Chọn năm:</label>
-    <select id="yearFilter">
-      <option value="all">Tất cả</option>
-      <option value="T10.2020">2020</option>
-      <option value="T10.2022">2022</option>
-      <option value="T10.2023">2023</option>
-    </select>
+    <div class="filter">
+      <label for="yearSelect">Chọn năm:</label>
+      <select id="yearSelect">
+        <option value="all">Tất cả</option>
+        <option value="2020">2020</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+      </select>
+    </div>
     <div id="table">Đang tải dữ liệu...</div>
   </div>
 
   <script>
-    let rawFeatures = [];
-
-    function renderTable(features, selectedYear) {
-      const container = document.getElementById("table");
-      if (features.length === 0) {
-        container.innerHTML = "Không có dữ liệu.";
-        return;
-      }
-
-      const headers = Object.keys(features[0].properties);
-      let html = `<table><thead><tr>` + headers.map(h => `<th>${h}</th>`).join("") + `</tr></thead><tbody>`;
-
-      features.forEach(f => {
-        const props = f.properties;
-        const filteredProps = {};
-        headers.forEach(h => {
-          filteredProps[h] = props[h];
-        });
-
-        if (selectedYear !== "all" && (props[selectedYear] === undefined || props[selectedYear] === null)) {
-          return;
-        }
-
-        html += `<tr>` + headers.map(h => `<td>${filteredProps[h] !== null && filteredProps[h] !== undefined ? filteredProps[h] : ""}</td>`).join("") + `</tr>`;
-      });
-
-      html += `</tbody></table>`;
-      container.innerHTML = html;
-    }
+    let allFeatures = [];
+    let headers = [];
 
     fetch("Flood_trace_all.geojson")
       .then(res => res.json())
       .then(data => {
-        rawFeatures = data.features || [];
-        renderTable(rawFeatures, "all");
-
-        document.getElementById("yearFilter").addEventListener("change", (e) => {
-          renderTable(rawFeatures, e.target.value);
-        });
+        allFeatures = data.features || [];
+        if (allFeatures.length === 0) {
+          document.getElementById("table").innerHTML = "Không có dữ liệu.";
+          return;
+        }
+        headers = Object.keys(allFeatures[0].properties);
+        renderTable("all");
       })
       .catch(() => {
         document.getElementById("table").innerHTML = "Lỗi khi tải dữ liệu.";
       });
+
+    document.getElementById("yearSelect").addEventListener("change", e => {
+      renderTable(e.target.value);
+    });
+
+    function renderTable(year) {
+      const container = document.getElementById("table");
+      const filtered = allFeatures.filter(f => {
+        if (year === "all") return true;
+        return f.properties[`T10.${year}`] != null;
+      });
+
+      let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
+      filtered.forEach(f => {
+        html += `<tr>` + headers.map(h => {
+          const val = f.properties[h];
+          return `<td>${val == null ? "" : val}</td>`;
+        }).join("") + `</tr>`;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
   </script>
 </body>
 </html>
