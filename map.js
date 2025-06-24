@@ -1,5 +1,3 @@
-// map.js - nâng cấp logic & giao diện đầy đủ có 2 trang
-
 const currentPage = window.location.pathname.includes('detail') ? 'detail' : 'home';
 
 function createNavBar() {
@@ -11,7 +9,6 @@ function createNavBar() {
   `;
   document.body.appendChild(nav);
 }
-
 createNavBar();
 
 if (currentPage === 'home') {
@@ -136,7 +133,7 @@ if (currentPage === 'home') {
       collapsed: false,
       position: "topleft"
     }).addTo(map);
-  }, 1200);
+  }, 1500);
 
   map.on("zoomend", () => {
     const z = Math.max(2.5, map.getZoom() / 2.2);
