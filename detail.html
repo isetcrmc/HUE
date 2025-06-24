@@ -95,45 +95,51 @@
   </div>
 
   <script>
-    let allFeatures = [];
-    let headers = [];
+  const container = document.getElementById("table");
+  let data = [];
 
-    fetch("Flood_trace_all.geojson")
-      .then(res => res.json())
-      .then(data => {
-        allFeatures = data.features || [];
-        if (allFeatures.length === 0) {
-          document.getElementById("table").innerHTML = "Không có dữ liệu.";
-          return;
-        }
-        headers = Object.keys(allFeatures[0].properties);
-        renderTable("all");
-      })
-      .catch(() => {
-        document.getElementById("table").innerHTML = "Lỗi khi tải dữ liệu.";
-      });
-
-    document.getElementById("yearSelect").addEventListener("change", e => {
-      renderTable(e.target.value);
+  fetch("Flood_trace_all.geojson")
+    .then(res => res.json())
+    .then(json => {
+      data = json.features || [];
+      renderTable("2023"); // Mặc định hiển thị năm 2023
+    })
+    .catch(() => {
+      container.innerHTML = "Lỗi khi tải dữ liệu.";
     });
 
-    function renderTable(year) {
-  const container = document.getElementById("table");
-  const filtered = allFeatures.filter(f => {
-    if (year === "all") return true;
-    return f.properties[`VL${year}`] != null;
-  });
+  function renderTable(year) {
+    const field = `VL${year}`;
+    const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
-  let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
-  filtered.forEach(f => {
-    html += `<tr>` + headers.map(h => {
-      const val = f.properties[h];
-      return `<td>${val == null ? "" : val}</td>`;
-    }).join("") + `</tr>`;
-  });
-  html += `</tbody></table>`;
-  container.innerHTML = html;
-}
-  </script>
+    const filtered = data.filter(f => {
+      const v = f.properties?.[field];
+      return v !== null && v !== undefined && v !== "";
+    });
+
+    let html = `
+      <label>Chọn năm:
+        <select onchange="renderTable(this.value)">
+          <option value="2020" ${year == "2020" ? "selected" : ""}>2020</option>
+          <option value="2022" ${year == "2022" ? "selected" : ""}>2022</option>
+          <option value="2023" ${year == "2023" ? "selected" : ""}>2023</option>
+        </select>
+      </label><br><br>
+      <table><thead><tr>
+        ${headers.map(h => `<th>${h}</th>`).join("")}
+      </tr></thead><tbody>
+    `;
+
+    filtered.forEach(f => {
+      html += `<tr>` + headers.map(h => {
+        const val = f.properties[h];
+        return `<td>${val ?? ""}</td>`;
+      }).join("") + `</tr>`;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+</script>
 </body>
 </html>
