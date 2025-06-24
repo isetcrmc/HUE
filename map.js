@@ -1,3 +1,4 @@
+// map.js hoàn chỉnh - gọi được từ HTML
 const map = L.map('map', { zoomControl: false }).setView([16.4637, 107.5909], 11);
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -15,21 +16,30 @@ function switchBase(type) {
   }
 }
 
-const layerMapping = {}; // Liên kết với bảng điều khiển lớp
-window.layerMapping = layerMapping;
-// Ranh giới phường
+// Giao diện thanh chuyển trang Trang chủ / Dữ liệu chi tiết
+(function createNavBar() {
+  const nav = document.createElement("div");
+  nav.style = "position:fixed;top:60px;left:0;right:0;height:40px;background:#0074D9;color:#fff;display:flex;align-items:center;padding-left:15px;z-index:9999;font-family:Calibri;font-size:16px;gap:20px";
+  nav.innerHTML = `
+    <a href="index.html" style="color:white;text-decoration:none;font-weight:bold">Trang chủ</a>
+    <a href="detail.html" style="color:white;text-decoration:none">Dữ liệu chi tiết</a>
+  `;
+  document.body.appendChild(nav);
+})();
+
+const layerMapping = {};
+window.layerMapping = layerMapping; // <- Đảm bảo dùng được trong HTML
+
 fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
   const layer = L.geoJSON(data);
   layerMapping["ward"] = layer;
 });
 
-// Ranh giới cộng đồng
 fetch("Community.geojson").then(res => res.json()).then(data => {
   const layer = L.geoJSON(data);
   layerMapping["community"] = layer;
 });
 
-// Đỗ xe tránh ngập: chia theo RoadType
 fetch("Do_xe.geojson").then(res => res.json()).then(data => {
   const fc1 = data.features.filter(f => f.properties.RoadType === "1 chiều");
   const fc2 = data.features.filter(f => f.properties.RoadType === "2 chiều");
@@ -37,7 +47,6 @@ fetch("Do_xe.geojson").then(res => res.json()).then(data => {
   layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 });
 });
 
-// Trạm đo mưa (Vrain)
 fetch("Vrain.geojson").then(res => res.json()).then(data => {
   const layer = L.geoJSON(data, {
     onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
@@ -45,7 +54,6 @@ fetch("Vrain.geojson").then(res => res.json()).then(data => {
   layerMapping["vrain"] = layer;
 });
 
-// Flood trace theo năm
 function addFloodLayer(year, color, idKey) {
   fetch("Flood_trace_all.geojson").then(res => res.json()).then(data => {
     const layer = L.geoJSON(data, {
@@ -76,7 +84,6 @@ addFloodLayer("2020", "orange", "flood2020");
 addFloodLayer("2022", "gold", "flood2022");
 addFloodLayer("2023", "limegreen", "flood2023");
 
-// Trạm đo theo icon
 const stationIcons = {
   "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
   "Tháp báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
@@ -97,12 +104,3 @@ fetch("Station.geojson").then(res => res.json()).then(data => {
     layerMapping[key] = layer;
   });
 });
-(function createNavBar() {
-  const nav = document.createElement("div");
-  nav.style = "position:fixed;top:60px;left:0;right:0;height:40px;background:#0074D9;color:#fff;display:flex;align-items:center;padding-left:15px;z-index:9999;font-family:Calibri;font-size:16px;gap:20px";
-  nav.innerHTML = `
-    <a href="index.html" style="color:white;text-decoration:none;font-weight:bold">Trang chủ</a>
-    <a href="detail.html" style="color:white;text-decoration:none;">Dữ liệu chi tiết</a>
-  `;
-  document.body.appendChild(nav);
-})();
