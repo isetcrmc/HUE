@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>Dữ liệu chi tiết - Giám sát ngập TP Huế</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Calibri, sans-serif;
+      font-size: 15px;
+      color: #222;
+    }
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #0074D9;
+      color: white;
+      font-size: 19px;
+      display: flex;
+      align-items: center;
+      padding-left: 18px;
+      z-index: 9999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .nav-bar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: #0074D9;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding-left: 18px;
+      font-size: 16px;
+      z-index: 9999;
+      gap: 20px;
+    }
+    .nav-bar a {
+      color: white;
+      text-decoration: none;
+    }
+    .nav-bar a.active {
+      font-weight: bold;
+    }
+    .content {
+      margin-top: 110px;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-bar">📡 Hệ thống Giám sát Ngập lụt Thành phố Huế</div>
+  <div class="nav-bar">
+    <a href="index.html">Trang chủ</a>
+    <a href="detail.html" class="active">Dữ liệu chi tiết</a>
+  </div>
+
+  <div class="content">
+    <h2>Bảng dữ liệu vết lũ</h2>
+    <div id="table">Đang tải dữ liệu...</div>
+  </div>
+
+  <script>
+    fetch("Flood_trace_all.geojson")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("table");
+        const features = data.features || [];
+        if (features.length === 0) {
+          container.innerHTML = "Không có dữ liệu.";
+          return;
+        }
+
+        const headers = Object.keys(features[0].properties);
+        let html = `<table><thead><tr>` + headers.map(h => `<th>${h}</th>`).join("") + `</tr></thead><tbody>`;
+        features.forEach(f => {
+          html += `<tr>` + headers.map(h => `<td>${f.properties[h] !== undefined ? f.properties[h] : ''}</td>`).join("") + `</tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+      })
+      .catch(() => {
+        document.getElementById("table").innerHTML = "Lỗi khi tải dữ liệu.";
+      });
+  </script>
+</body>
+</html>
