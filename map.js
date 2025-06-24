@@ -33,7 +33,7 @@ if (currentPage === 'home') {
   }
   window.switchBase = switchBase;
 
-  const overlays = {
+  const groupedOverlays = {
     "Lớp bản đồ nền": {
       "Ranh giới hành chính": {},
       "Giao thông": {},
@@ -45,40 +45,34 @@ if (currentPage === 'home') {
     }
   };
 
-  // Ranh giới hành chính
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
     const layer = L.geoJSON(data);
-    overlays["Lớp bản đồ nền"]["Ranh giới hành chính"]["Ranh giới phường"] = layer;
+    groupedOverlays["Lớp bản đồ nền"]["Ranh giới hành chính"]["Ranh giới phường"] = layer;
   });
 
   fetch("Community.geojson").then(res => res.json()).then(data => {
     const layer = L.geoJSON(data);
-    overlays["Lớp bản đồ nền"]["Ranh giới hành chính"]["Ranh giới cộng đồng"] = layer;
+    groupedOverlays["Lớp bản đồ nền"]["Ranh giới hành chính"]["Ranh giới cộng đồng"] = layer;
   });
 
-  // Giao thông
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
-    const doxeLayer = L.geoJSON(data);
-    overlays["Lớp bản đồ nền"]["Giao thông"]["Đỗ xe"] = doxeLayer;
-
-    const types = {};
+    const roadTypes = {};
     data.features.forEach(f => {
       const type = f.properties.RoadType || "Khác";
-      if (!types[type]) types[type] = [];
-      types[type].push(f);
+      if (!roadTypes[type]) roadTypes[type] = [];
+      roadTypes[type].push(f);
     });
-    Object.entries(types).forEach(([type, features]) => {
+    Object.entries(roadTypes).forEach(([type, features]) => {
       const layer = L.geoJSON({ type: 'FeatureCollection', features });
-      overlays["Lớp bản đồ nền"]["Giao thông"][`Theo loại đường - ${type}`] = layer;
+      groupedOverlays["Lớp bản đồ nền"]["Giao thông"][`Đỗ xe - ${type}`] = layer;
     });
   });
 
-  // Quan trắc KTTV
   fetch("Vrain.geojson").then(res => res.json()).then(data => {
     const layer = L.geoJSON(data, {
       onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
     });
-    overlays["Lớp bản đồ nền"]["Trạm quan trắc KTTV"]["Vrain"] = layer;
+    groupedOverlays["Lớp bản đồ nền"]["Trạm quan trắc KTTV"]["Trạm đo mưa"] = layer;
   });
 
   function addFloodLayer(year, color) {
@@ -104,14 +98,13 @@ if (currentPage === 'home') {
           l.bindPopup(popup);
         }
       });
-      overlays["Giám sát ngập lụt"]["Vết lũ"][`Năm ${year}`] = layer;
+      groupedOverlays["Giám sát ngập lụt"]["Vết lũ"][`Năm ${year}`] = layer;
     });
   }
   addFloodLayer('2020', 'orange');
   addFloodLayer('2022', 'gold');
   addFloodLayer('2023', 'limegreen');
 
-  // Trạm đo
   const stationIcons = {
     "Tháp báo lũ": L.icon({ iconUrl: 'icons/ruler_black.svg', iconSize: [28, 28] }),
     "Tháp báo ngập": L.icon({ iconUrl: 'icons/ruler_brown.svg', iconSize: [28, 28] }),
@@ -134,20 +127,20 @@ if (currentPage === 'home') {
         }
       });
       const iconHtml = `<img src='${stationIcons[type].options.iconUrl}' width='28' style='vertical-align:middle;margin-right:6px;'>`;
-      overlays["Giám sát ngập lụt"]["Trạm đo"][`${iconHtml} ${displayName[type]}`] = layer;
+      groupedOverlays["Giám sát ngập lụt"]["Trạm đo"][`${iconHtml} ${displayName[type]}`] = layer;
     });
   });
 
   setTimeout(() => {
-    L.control.groupedLayers({}, overlays, {
+    L.control.groupedLayers({}, groupedOverlays, {
       collapsed: false,
       position: "topleft"
     }).addTo(map);
-  }, 1000);
+  }, 1200);
 
   map.on("zoomend", () => {
     const z = Math.max(2.5, map.getZoom() / 2.2);
-    Object.values(overlays["Giám sát ngập lụt"]["Vết lũ"]).forEach(layer => {
+    Object.values(groupedOverlays["Giám sát ngập lụt"]["Vết lũ"]).forEach(layer => {
       layer.eachLayer(l => { if (l.setRadius) l.setRadius(z); });
     });
   });
