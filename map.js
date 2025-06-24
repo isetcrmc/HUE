@@ -16,7 +16,7 @@ function switchBase(type) {
 }
 
 const layerMapping = {}; // Liên kết với bảng điều khiển lớp
-
+window.layerMapping = layerMapping;
 // Ranh giới phường
 fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
   const layer = L.geoJSON(data);
