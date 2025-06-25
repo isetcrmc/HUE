@@ -97,22 +97,22 @@
 
   <script>
   const container = document.getElementById("table");
-  const countSpan = document.getElementById("count");
   const yearSelect = document.getElementById("yearSelect");
+  const countSpan = document.getElementById("count");
   let data = [];
 
   fetch("Flood_trace_all.geojson")
     .then(res => res.json())
     .then(json => {
       data = json.features || [];
-      renderTable(yearSelect.value);
+      renderTable(yearSelect.value); // hiển thị dữ liệu theo năm chọn ban đầu
     })
     .catch(() => {
       container.innerHTML = "Lỗi khi tải dữ liệu.";
     });
 
-  yearSelect.addEventListener("change", e => {
-    renderTable(e.target.value);
+  yearSelect.addEventListener("change", () => {
+    renderTable(yearSelect.value);
   });
 
   function renderTable(year) {
@@ -121,22 +121,30 @@
 
     const filtered = field
       ? data.filter(f => {
-          const v = f.properties?.[field];
-          return v !== null && v !== undefined && v !== "" && v !== 0;
+          const val = f.properties?.[field];
+          return val !== null && val !== undefined && val !== "";
         })
       : data;
 
-    // Cập nhật số vết lũ
-    countSpan.textContent = `Số vết lũ: ${filtered.length}`;
+    // Cập nhật số lượng
+    if (countSpan) {
+      countSpan.textContent = `Số vết lũ: ${filtered.length}`;
+    }
 
-    // Render bảng
-    let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
+    // Tạo bảng
+    let html = `
+      <table><thead><tr>
+        ${headers.map(h => `<th>${h}</th>`).join("")}
+      </tr></thead><tbody>
+    `;
+
     filtered.forEach(f => {
       html += `<tr>` + headers.map(h => {
         const val = f.properties[h];
         return `<td>${val ?? ""}</td>`;
       }).join("") + `</tr>`;
     });
+
     html += `</tbody></table>`;
     container.innerHTML = html;
   }
