@@ -96,51 +96,50 @@
   </div>
 
   <script>
-    const container = document.getElementById("table");
-    const yearSelect = document.getElementById("yearSelect");
-    const floodCount = document.getElementById("floodCount");
-    let data = [];
+  const container = document.getElementById("table");
+  const countSpan = document.getElementById("count");
+  const yearSelect = document.getElementById("yearSelect");
+  let data = [];
 
-    fetch("Flood_trace_all.geojson")
-      .then(res => res.json())
-      .then(json => {
-        data = json.features || [];
-        renderTable("2023");
-      })
-      .catch(() => {
-        container.innerHTML = "Lỗi khi tải dữ liệu.";
-      });
-
-    yearSelect.addEventListener("change", function () {
-      renderTable(this.value);
+  fetch("Flood_trace_all.geojson")
+    .then(res => res.json())
+    .then(json => {
+      data = json.features || [];
+      renderTable(yearSelect.value);
+    })
+    .catch(() => {
+      container.innerHTML = "Lỗi khi tải dữ liệu.";
     });
 
-    function renderTable(year) {
-      const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
+  yearSelect.addEventListener("change", e => {
+    renderTable(e.target.value);
+  });
 
-      const filtered = data.filter(f => {
-        if (year === "all") return true;
-        const field = `VL${year}`;
-        const val = f.properties?.[field];
-        return val !== null && val !== undefined && val !== "" && val !== 0;
-      });
+  function renderTable(year) {
+    const field = year === "all" ? null : `VL${year}`;
+    const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
-      floodCount.textContent = ` Số vết lũ: ${filtered.length}`;
+    const filtered = field
+      ? data.filter(f => {
+          const v = f.properties?.[field];
+          return v !== null && v !== undefined && v !== "" && v !== 0;
+        })
+      : data;
 
-      let html = `<table><thead><tr>
-        ${headers.map(h => `<th>${h}</th>`).join("")}
-      </tr></thead><tbody>`;
+    // Cập nhật số vết lũ
+    countSpan.textContent = `Số vết lũ: ${filtered.length}`;
 
-      filtered.forEach(f => {
-        html += `<tr>` + headers.map(h => {
-          const val = f.properties[h];
-          return `<td>${val ?? ""}</td>`;
-        }).join("") + `</tr>`;
-      });
-
-      html += `</tbody></table>`;
-      container.innerHTML = html;
-    }
-  </script>
+    // Render bảng
+    let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
+    filtered.forEach(f => {
+      html += `<tr>` + headers.map(h => {
+        const val = f.properties[h];
+        return `<td>${val ?? ""}</td>`;
+      }).join("") + `</tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+</script>
 </body>
 </html>
