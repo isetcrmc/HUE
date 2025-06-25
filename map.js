@@ -58,7 +58,6 @@ onEachFeature: (f, l) => {
 );
 
 // Đỗ xe tránh ngập
-// Đỗ xe tránh ngập
 promises.push(
   fetch("Do_xe.geojson").then(res => res.json()).then(data => {
     const fc1 = data.features.filter(f => f.properties.RoadType === "Đỗ 1 chiều");
@@ -68,7 +67,6 @@ promises.push(
     layerMapping["do_xe_1"] = L.geoJSON({ type: 'FeatureCollection', features: fc1 }, {
       style: { color: '#0a0', weight: 2, dashArray: '5,3' },
       onEachFeature: (f, l) => {
-        // Kiểm tra nếu thư viện PolylineDecorator đã được load
         if (L.Symbol && L.Symbol.arrowHead) {
           const arrowHead = L.polylineDecorator(l, {
             patterns: [{
@@ -87,13 +85,16 @@ promises.push(
       }
     });
 
-    // Lớp đỗ xe 2 chiều
-layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-  style: { color: '#8B4513', weight: 2, dashArray: '5,3' },
-  onEachFeature: (f, l) => {
-    l.bindPopup(`<b>${f.properties.Name || ''}</b><br><b>Ghi chú:</b> ${f.properties.ghiChu || ''}`);
-  }
-});
+    // ✅ Lớp đỗ xe 2 chiều (đã sửa đầy đủ)
+    layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
+      style: { color: '#8B4513', weight: 2, dashArray: '5,3' },
+      onEachFeature: (f, l) => {
+        l.bindPopup(`<b>${f.properties.Name || ''}</b><br><b>Ghi chú:</b> ${f.properties.ghiChu || ''}`);
+      }
+    });
+  })
+);
+
 
 
 // Trạm đo mưa (Vrain)
