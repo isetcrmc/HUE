@@ -90,64 +90,62 @@
         <option value="2022">2022</option>
         <option value="2023" selected>2023</option>
       </select>
-       <span id="count" style="margin-left: 15px;"></span> <!-- 👈 THÊM DÒNG NÀY -->
+      <span id="count" style="margin-left: 15px;"></span>
     </div>
     <div id="table">Đang tải dữ liệu...</div>
   </div>
 
   <script>
-  const container = document.getElementById("table");
-  const yearSelect = document.getElementById("yearSelect");
-  const countSpan = document.getElementById("count");
-  let data = [];
+    const container = document.getElementById("table");
+    const yearSelect = document.getElementById("yearSelect");
+    const countSpan = document.getElementById("count");
+    let data = [];
 
-  fetch("Flood_trace_all.geojson")
-    .then(res => res.json())
-    .then(json => {
-      data = json.features || [];
-      renderTable(yearSelect.value); // hiển thị dữ liệu theo năm chọn ban đầu
-    })
-    .catch(() => {
-      container.innerHTML = "Lỗi khi tải dữ liệu.";
+    fetch("Flood_trace_all.geojson")
+      .then(res => res.json())
+      .then(json => {
+        data = json.features || [];
+        renderTable(yearSelect.value);
+      })
+      .catch(() => {
+        container.innerHTML = "Lỗi khi tải dữ liệu.";
+      });
+
+    yearSelect.addEventListener("change", () => {
+      renderTable(yearSelect.value);
     });
 
-  yearSelect.addEventListener("change", () => {
-    renderTable(yearSelect.value);
-  });
+    function renderTable(year) {
+      const field = year === "all" ? null : `VL${year}`;
+      const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
-  function renderTable(year) {
-    const field = year === "all" ? null : `VL${year}`;
-    const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
+      const filtered = field
+        ? data.filter(f => {
+            const val = f.properties?.[field];
+            return val !== null && val !== undefined && val !== "";
+          })
+        : data;
 
-    const filtered = field
-      ? data.filter(f => {
-          const val = f.properties?.[field];
-          return val !== null && val !== undefined && val !== "";
-        })
-      : data;
+      if (countSpan) {
+        countSpan.textContent = `Số vết lũ: ${filtered.length}`;
+      }
 
-    // Cập nhật số lượng
-    if (countSpan) {
-      countSpan.textContent = `Số vết lũ: ${filtered.length}`;
+      let html = `
+        <table><thead><tr>
+          ${headers.map(h => `<th>${h}</th>`).join("")}
+        </tr></thead><tbody>
+      `;
+
+      filtered.forEach(f => {
+        html += `<tr>` + headers.map(h => {
+          const val = f.properties[h];
+          return `<td>${val ?? ""}</td>`;
+        }).join("") + `</tr>`;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
     }
-
-    // Tạo bảng
-    let html = `
-      <table><thead><tr>
-        ${headers.map(h => `<th>${h}</th>`).join("")}
-      </tr></thead><tbody>
-    `;
-
-    filtered.forEach(f => {
-      html += `<tr>` + headers.map(h => {
-        const val = f.properties[h];
-        return `<td>${val ?? ""}</td>`;
-      }).join("") + `</tr>`;
-    });
-
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-  }
-</script>
+  </script>
 </body>
 </html>
