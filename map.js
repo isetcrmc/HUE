@@ -29,15 +29,13 @@ promises.push(
     layerMapping["ward"] = L.geoJSON(data, {
       style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
-  l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
-
-  l.on('click', function(e) {
-    L.DomEvent.stopPropagation(e); // Ngăn Leaflet tự focus vào polygon
-    l.openPopup(); // Mở popup thủ công
-  });
-
-  l.bindPopup(`<b>${f.properties.Name || ''}</b>`, { autoPan: false }); // Tắt auto pan
-}
+        l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+        l.on('click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          l.openPopup();
+        });
+        l.bindPopup(`<b>${f.properties.Name || ''}</b>`, { autoPan: false });
+      }
     });
   })
 );
@@ -48,15 +46,13 @@ promises.push(
     layerMapping["community"] = L.geoJSON(data, {
       style: { color: '#FF8C00', weight: 2, fillOpacity: 0, dashArray: '4,4' },
 onEachFeature: (f, l) => {
-  l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
-
-  l.on('click', function(e) {
-    L.DomEvent.stopPropagation(e); // Chặn Leaflet vẽ rectangle
-    l.openPopup(); // Hiển thị popup bình thường
-  });
-
-  l.bindPopup(`<b>${f.properties.Name || ''}</b>`, { autoPan: false });
-}
+        l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+        l.on('click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          l.openPopup();
+        });
+        l.bindPopup(`<b>${f.properties.Name || ''}</b>`, { autoPan: false });
+      }
     });
   })
 );
@@ -86,15 +82,17 @@ promises.push(
             }]
           });
           arrowHead.addTo(map);
-        } else {
-          console.warn("Thư viện PolylineDecorator chưa được load. Không thể hiển thị mũi tên.");
         }
+        l.bindPopup(`<b>${f.properties.Name || ''}</b><br><b>Ghi chú:</b> ${f.properties.ghiChu || ''}`);
       }
     });
 
     // Lớp đỗ xe 2 chiều
     layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
       style: { color: '#8B4513', weight: 2, dashArray: '5,3' }
+    onEachFeature: (f, l) => {
+        l.bindPopup(`<b>${f.properties.Name || ''}</b><br><b>Ghi chú:</b> ${f.properties.ghiChu || ''}`);
+      }
     });
   })
 );
@@ -106,7 +104,9 @@ promises.push(
     const smallIcon = L.icon({ iconUrl: 'icons/rain.svg', iconSize: [18, 18] });
     layerMapping["tram_vrain"] = L.geoJSON(data, {
       pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
-      onEachFeature: (f, l) => l.bindPopup(`<b>${f.properties.Ten || ''}</b>`)
+      onEachFeature: (f, l) => {
+        l.bindPopup(`<b>${f.properties.Ten || ''}</b><br><b>Địa điểm:</b> ${f.properties.Dia_diem || ''}<br><b>Năm:</b> ${f.properties.Nam || ''}`);
+      }
     });
   })
 );
