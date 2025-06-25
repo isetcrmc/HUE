@@ -29,14 +29,14 @@ promises.push(
     layerMapping["ward"] = L.geoJSON(data, {
       style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
-  l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
   l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
 
-  // Nếu có handler click, thì chỉ nên highlight bằng style, không dùng rectangle
   l.on('click', function(e) {
-    // Nếu cần highlight thì dùng style thay vì vẽ hình chữ nhật
-    l.setStyle({ weight: 3, color: '#0077ff' });
+    L.DomEvent.stopPropagation(e); // Ngăn Leaflet tự focus vào polygon
+    l.openPopup(); // Mở popup thủ công
   });
+
+  l.bindPopup(`<b>${f.properties.Name || ''}</b>`, { autoPan: false }); // Tắt auto pan
 }
     });
   })
@@ -48,14 +48,14 @@ promises.push(
     layerMapping["community"] = L.geoJSON(data, {
       style: { color: '#FF8C00', weight: 2, fillOpacity: 0, dashArray: '4,4' },
 onEachFeature: (f, l) => {
-  l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
   l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
 
-  // Ngăn hành vi click tự tạo rectangle (nếu có)
-  l.on('click', function (e) {
-    // Nếu có nhu cầu, highlight bằng style nhẹ thôi, không fitBounds hay vẽ rectangle
-    l.setStyle({ weight: 3, color: '#ff6600' });
+  l.on('click', function(e) {
+    L.DomEvent.stopPropagation(e); // Chặn Leaflet vẽ rectangle
+    l.openPopup(); // Hiển thị popup bình thường
   });
+
+  l.bindPopup(`<b>${f.properties.Name || ''}</b>`, { autoPan: false });
 }
     });
   })
