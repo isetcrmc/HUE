@@ -104,7 +104,7 @@ promises.push(
     layerMapping["tram_vrain"] = L.geoJSON(data, {
       pointToLayer: (f, latlng) => L.marker(latlng, { icon: smallIcon }),
       onEachFeature: (f, l) => {
-        l.bindPopup(`<b>${f.properties.Ten || ''}</b><br><b>Địa điểm:</b> ${f.properties.Dia_diem || ''}<br><b>Năm:</b> ${f.properties.Nam || ''}`);
+        l.bindPopup(`<b>${f.properties.Ten || ''}</b><br><b>Địa điểm:</b> ${f.properties.Dia_diem || ''}<br><b>Năm:</b> ${f.properties.Năm || ''}`);
       }
     });
   })
