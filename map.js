@@ -29,9 +29,15 @@ promises.push(
     layerMapping["ward"] = L.geoJSON(data, {
       style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
       onEachFeature: (f, l) => {
-        l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
-        l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
-      }
+  l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
+  l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+
+  // Nếu có handler click, thì chỉ nên highlight bằng style, không dùng rectangle
+  l.on('click', function(e) {
+    // Nếu cần highlight thì dùng style thay vì vẽ hình chữ nhật
+    l.setStyle({ weight: 3, color: '#0077ff' });
+  });
+}
     });
   })
 );
