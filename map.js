@@ -154,6 +154,78 @@ promises.push(
     });
   })
 );
+// Hàm lấy dữ liệu từ một mã trạm cụ thể
+async function fetchVrainData(stationCode) {
+  try {
+    const response = await fetch(`https://vrain.vn/api/data/${stationCode}.json`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Lỗi khi tải ${stationCode}.json:`, error);
+    return [];
+  }
+}
+
+// Chuyển đổi dữ liệu sang GeoJSON
+function convertToGeoJSON(vrainArray) {
+  return {
+    type: "FeatureCollection",
+    features: vrainArray.map(item => ({
+      type: "Feature",
+      properties: {
+        id: item[0],
+        name: item[1],
+        rain: item[5],
+        temp: item[6]
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [item[3], item[4]]  // [lon, lat]
+      }
+    }))
+  };
+}
+
+// Thêm dữ liệu lên bản đồ
+async function addAllVrainStations(map) {
+  const stationCodes = [
+    ...range(927, 930),
+    ...range(463, 466),
+    ...range(230, 234),
+    ...range(114, 118)
+  ].map(code => String(code));
+
+  for (const code of stationCodes) {
+    const rawData = await fetchVrainData(code);
+    const geojson = convertToGeoJSON(rawData);
+
+    L.geoJSON(geojson, {
+      pointToLayer: (feature, latlng) => {
+        return L.circleMarker(latlng, {
+          radius: 6,
+          fillColor: "#0077ff",
+          color: "#003366",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.85
+        }).bindPopup(`
+          <b>Trạm: ${feature.properties.name}</b><br>
+          Lượng mưa: ${feature.properties.rain} mm<br>
+          Nhiệt độ: ${feature.properties.temp} °C
+        `);
+      }
+    }).addTo(map);
+  }
+}
+
+// Hàm tạo mảng từ a đến b
+function range(start, end) {
+  return Array.from({length: end - start + 1}, (_, i) => start + i);
+}
+
+// Gọi hàm
+addAllVrainStations(map);
+
 
 Promise.all(promises).then(() => {
   console.log("Tất cả lớp đã load xong.");
