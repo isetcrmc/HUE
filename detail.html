@@ -119,11 +119,10 @@
   const field = year === "all" ? null : `VL${year}`;
   const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
-  const filtered = (year === "all")
-  ? data
-  : data.filter(f => {
-      const val = f.properties?.[field];
-      return val !== null && val !== undefined && val.toString().trim() !== "";
+      const filtered = data.filter(f => {
+      if (year === "all") return true;
+      const val = f.properties?.[`VL${year}`];
+      return val != null && String(val).includes(String(year));
     });
 
   if (countSpan) {
