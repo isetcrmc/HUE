@@ -88,14 +88,12 @@ promises.push(
     });
 
     // Lớp đỗ xe 2 chiều
-    layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
-      style: { color: '#8B4513', weight: 2, dashArray: '5,3' }
-    onEachFeature: (f, l) => {
-        l.bindPopup(`<b>${f.properties.Name || ''}</b><br><b>Ghi chú:</b> ${f.properties.ghiChu || ''}`);
-      }
-    });
-  })
-);
+layerMapping["do_xe_2"] = L.geoJSON({ type: 'FeatureCollection', features: fc2 }, {
+  style: { color: '#8B4513', weight: 2, dashArray: '5,3' },
+  onEachFeature: (f, l) => {
+    l.bindPopup(`<b>${f.properties.Name || ''}</b><br><b>Ghi chú:</b> ${f.properties.ghiChu || ''}`);
+  }
+});
 
 
 // Trạm đo mưa (Vrain)
