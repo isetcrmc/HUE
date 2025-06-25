@@ -35,8 +35,7 @@ layerMapping["ward"] = L.geoJSON(data, {
         if (l.setStyle) l.setStyle({ weight: 1, color: '#666' });
       });
       layer.setStyle({ weight: 3, color: '#0077ff' });
-      layer.openPopup();
-    });
+       });
     layer.bindTooltip(feature.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
     layer.bindPopup(`<b>${feature.properties.Name || ''}</b>`, { autoPan: false });
   }
@@ -54,8 +53,7 @@ layerMapping["community"] = L.geoJSON(data, {
         if (l.setStyle) l.setStyle({ weight: 2, color: '#FF8C00' });
       });
       layer.setStyle({ weight: 3, color: '#ff6600' });
-      layer.openPopup();
-    });
+      });
     layer.bindTooltip(feature.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
     layer.bindPopup(`<b>${feature.properties.Name || ''}</b>`, { autoPan: false });
   }
