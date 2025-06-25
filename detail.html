@@ -119,13 +119,12 @@
   const field = year === "all" ? null : `VL${year}`;
   const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
-  const filtered = field
-    ? data.filter(f => {
-        const val = f.properties?.[field];
-        // Chuyển tất cả sang chuỗi để kiểm tra giá trị có tồn tại
-        return val !== null && val !== undefined && val.toString().trim() !== "";
-      })
-    : data;
+  const filtered = (year === "all")
+  ? data
+  : data.filter(f => {
+      const val = f.properties?.[field];
+      return val !== null && val !== undefined && val.toString().trim() !== "";
+    });
 
   if (countSpan) {
     countSpan.textContent = `Số vết lũ: ${filtered.length}`;
