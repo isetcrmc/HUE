@@ -113,25 +113,26 @@
       renderTable(e.target.value);
     });
 
-    function renderTable(year) {
-      const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
+function renderTable(year) {
+  const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
-      const filtered = data.filter(f => {
-        if (year === "all") return true;
-        const val = f.properties?.[`VL${year}`];
-        return val !== null && val !== undefined && val !== "" && val !== "0" && val !== "NULL";
-      });
+  const filtered = data.filter(f => {
+    if (year === "all") return true;
+    const val = f.properties?.[`VL${year}`];
+    // Chuyển tất cả về chuỗi và kiểm tra nếu chứa năm (ví dụ: "2020.000000" -> "2020")
+    return val != null && String(val).includes(year);
+  });
 
-      let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
-      filtered.forEach(f => {
-        html += `<tr>` + headers.map(h => {
-          const val = f.properties[h];
-          return `<td>${val ?? ""}</td>`;
-        }).join("") + `</tr>`;
-      });
-      html += `</tbody></table>`;
-      container.innerHTML = html;
-    }
+  let html = `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>`;
+  filtered.forEach(f => {
+    html += `<tr>` + headers.map(h => {
+      const val = f.properties[h];
+      return `<td>${val ?? ""}</td>`;
+    }).join("") + `</tr>`;
+  });
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
   </script>
 </body>
 </html>
