@@ -94,42 +94,42 @@
     <div id="table">Đang tải dữ liệu...</div>
   </div>
 
-  <script>
+<script>
   const container = document.getElementById("table");
+  const yearSelect = document.getElementById("yearSelect");
   let data = [];
 
   fetch("Flood_trace_all.geojson")
     .then(res => res.json())
     .then(json => {
       data = json.features || [];
-      renderTable("2023"); // Mặc định chọn 2023
+      renderTable("2023"); // Hiển thị mặc định 2023
     })
     .catch(() => {
       container.innerHTML = "Lỗi khi tải dữ liệu.";
     });
+
+  yearSelect.addEventListener("change", function () {
+    renderTable(this.value);
+  });
 
   function renderTable(year) {
     const headers = data.length > 0 ? Object.keys(data[0].properties) : [];
 
     const filtered = data.filter(f => {
       if (year === "all") return true;
-      const val = f.properties?.[`VL${year}`];
-      return val != null && String(val).includes(String(year));
+      const field = `VL${year}`;
+      const val = f.properties?.[field];
+      return val !== null && val !== undefined && val !== "" && val !== 0;
     });
 
     let html = `
-      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-        <label for="yearSelect">Chọn năm:
-          <select id="yearSelect" onchange="renderTable(this.value)">
-            <option value="all" ${year === "all" ? "selected" : ""}>Tất cả</option>
-            <option value="2020" ${year === "2020" ? "selected" : ""}>2020</option>
-            <option value="2022" ${year === "2022" ? "selected" : ""}>2022</option>
-            <option value="2023" ${year === "2023" ? "selected" : ""}>2023</option>
-          </select>
-        </label>
-        <span><strong>Số vết lũ:</strong> ${filtered.length}</span>
+      <div style="margin-bottom: 10px;">
+        <strong>Số vết lũ:</strong> ${filtered.length}
       </div>
-      <table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>
+      <table><thead><tr>
+        ${headers.map(h => `<th>${h}</th>`).join("")}
+      </tr></thead><tbody>
     `;
 
     filtered.forEach(f => {
@@ -143,6 +143,7 @@
     container.innerHTML = html;
   }
 </script>
+
 
 </body>
 </html>
