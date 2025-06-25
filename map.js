@@ -47,10 +47,16 @@ promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
     layerMapping["community"] = L.geoJSON(data, {
       style: { color: '#FF8C00', weight: 2, fillOpacity: 0, dashArray: '4,4' },
-      onEachFeature: (f, l) => {
-        l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
-        l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
-      }
+onEachFeature: (f, l) => {
+  l.bindPopup(`<b>${f.properties.Name || ''}</b>`);
+  l.bindTooltip(f.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+
+  // Ngăn hành vi click tự tạo rectangle (nếu có)
+  l.on('click', function (e) {
+    // Nếu có nhu cầu, highlight bằng style nhẹ thôi, không fitBounds hay vẽ rectangle
+    l.setStyle({ weight: 3, color: '#ff6600' });
+  });
+}
     });
   })
 );
