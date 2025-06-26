@@ -26,39 +26,42 @@ const promises = [];
 // Ranh giới hành chính (phường)
 promises.push(
   fetch("Ward_2025.geojson").then(res => res.json()).then(data => {
-layerMapping["ward"] = L.geoJSON(data, {
-  style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
-  onEachFeature: function (feature, layer) {
-    layer.on('click', function (e) {
-      L.DomEvent.stopPropagation(e);
-      Object.values(layerMapping).forEach(l => {
-        if (l.setStyle) l.setStyle({ weight: 1, color: '#666' });
-      });
-      layer.setStyle({ weight: 3, color: '#0077ff' });
-       });
-    layer.bindTooltip(feature.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
-    layer.bindPopup(`<b>${feature.properties.Name || ''}</b>`, { autoPan: false });
-  }
-});
+    layerMapping["ward"] = L.geoJSON(data, {
+      style: { color: '#666', weight: 1, fillOpacity: 0, dashArray: '4,4' },
+      onEachFeature: function (feature, layer) {
+        layer.on('click', function (e) {
+          L.DomEvent.stopPropagation(e);
+          Object.values(layerMapping).forEach(l => {
+            if (l.setStyle) l.setStyle({ weight: 1, color: '#666' });
+          });
+          layer.setStyle({ weight: 3, color: '#0077ff' });
+        });
+        layer.bindTooltip(feature.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+        layer.bindPopup(`<b>${feature.properties.Name || ''}</b>`, { autoPan: false });
+      }
+    }); // ✅ thiếu dòng này
+  }) // ✅ thiếu dòng này
+);
 
 // Ranh giới cộng đồng
 promises.push(
   fetch("Community.geojson").then(res => res.json()).then(data => {
-layerMapping["community"] = L.geoJSON(data, {
-  style: { color: '#FF8C00', weight: 2, fillOpacity: 0, dashArray: '4,4' },
-  onEachFeature: function (feature, layer) {
-    layer.on('click', function (e) {
-      L.DomEvent.stopPropagation(e);
-      Object.values(layerMapping).forEach(l => {
-        if (l.setStyle) l.setStyle({ weight: 2, color: '#FF8C00' });
-      });
-      layer.setStyle({ weight: 3, color: '#ff6600' });
-      });
-    layer.bindTooltip(feature.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
-    layer.bindPopup(`<b>${feature.properties.Name || ''}</b>`, { autoPan: false });
-  }
-});
-
+    layerMapping["community"] = L.geoJSON(data, {
+      style: { color: '#FF8C00', weight: 2, fillOpacity: 0, dashArray: '4,4' },
+      onEachFeature: function (feature, layer) {
+        layer.on('click', function (e) {
+          L.DomEvent.stopPropagation(e);
+          Object.values(layerMapping).forEach(l => {
+            if (l.setStyle) l.setStyle({ weight: 2, color: '#FF8C00' });
+          });
+          layer.setStyle({ weight: 3, color: '#ff6600' });
+        });
+        layer.bindTooltip(feature.properties.Name || '', { permanent: false, direction: 'center', className: 'label-tooltip' });
+        layer.bindPopup(`<b>${feature.properties.Name || ''}</b>`, { autoPan: false });
+      }
+    }); // ✅ thiếu dòng này
+  }) // ✅ thiếu dòng này
+);
 
 // Đỗ xe tránh ngập
 promises.push(
