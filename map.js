@@ -129,7 +129,7 @@ promises.push(
           fillColor: colors[idx],
           color: "#333",
           weight: 0.5,
-          fillOpacity: 0.75
+          fillOpacity: 0.75,
           interactive: true // đảm bảo có thể click
         }),
         onEachFeature: (f, l) => {
