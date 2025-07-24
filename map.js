@@ -130,7 +130,7 @@ promises.push(
           color: "#333",
           weight: 0.5,
           fillOpacity: 0.75,
-          interactive: true // đảm bảo có thể click
+          interactive: true
         }),
         onEachFeature: (f, l) => {
           let p = f.properties;
