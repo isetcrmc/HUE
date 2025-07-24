@@ -139,10 +139,13 @@ promises.push(
          ["2020", "2022", "2023"].forEach(y => {
   ["T10", "T11"].forEach(m => {
     const key = `${m}_${y}`;
-    const rawVal = p[key];
+    const val = p[key];
 
-    if (rawVal !== undefined && rawVal !== null && rawVal !== "" && rawVal !== "không ngập") {
-      const num = Number(rawVal);
+    // Chỉ hiển thị nếu val là số thực sự (dạng string hoặc number)
+    if (val !== undefined && val !== null) {
+      const cleaned = String(val).trim();  // chuyển thành chuỗi và loại khoảng trắng
+      const num = Number(cleaned);
+
       if (!isNaN(num) && isFinite(num)) {
         popup += `<br><b>Độ sâu ${m}/${y}:</b> ${num.toFixed(2)} m`;
       }
