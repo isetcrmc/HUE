@@ -136,12 +136,18 @@ promises.push(
           let popup = `<b>Tên vết lũ:</b> ${p.Name || ''}<br><b>ID:</b> ${p.ID || ''}<br><b>Code:</b> ${p.Code || ''}`;
           if (p.Address || p.Ward) popup += `<br><b>Địa điểm:</b> ${(p.Address || '') + (p.Ward ? ', ' + p.Ward : '')}`;
           popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
-          ["2020", "2022", "2023"].forEach(y => { 
-  let val = p[`T10_${y}_`] || p[`T11_${y}_`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`];
-  let num = Number(val);
-  if (!isNaN(num) && isFinite(num)) {
-    popup += `<br><b>Độ sâu ${y}:</b> ${num.toFixed(2)} m`;
-  }
+         ["2020", "2022", "2023"].forEach(y => {
+  ["T10", "T11"].forEach(m => {
+    const key = `${m}_${y}`;
+    const rawVal = p[key];
+
+    if (rawVal !== undefined && rawVal !== null && rawVal !== "" && rawVal !== "không ngập") {
+      const num = Number(rawVal);
+      if (!isNaN(num) && isFinite(num)) {
+        popup += `<br><b>Độ sâu ${m}/${y}:</b> ${num.toFixed(2)} m`;
+      }
+    }
+  });
 });
           l.bindPopup(popup);
         }
