@@ -125,11 +125,12 @@ promises.push(
       const layer = L.geoJSON(data, {
         filter: f => f.properties[`VL${year}`],
         pointToLayer: (f, latlng) => L.circleMarker(latlng, {
-          radius: 3.5,
+          radius: 5,
           fillColor: colors[idx],
           color: "#333",
           weight: 0.5,
           fillOpacity: 0.75
+          interactive: true // đảm bảo có thể click
         }),
         onEachFeature: (f, l) => {
           let p = f.properties;
