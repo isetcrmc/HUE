@@ -134,7 +134,7 @@ promises.push(
         onEachFeature: (f, l) => {
           let p = f.properties;
           let popup = `<b>Tên vết lũ:</b> ${p.Name || ''}<br><b>ID:</b> ${p.ID || ''}<br><b>Code:</b> ${p.Code || ''}`;
-          if (p.Commune || p.District) popup += `<br><b>Địa điểm:</b> ${(p.Commune || '') + (p.District ? ', ' + p.District : '')}`;
+          if (p.Address || p.Ward) popup += `<br><b>Địa điểm:</b> ${(p.Address || '') + (p.Ward ? ', ' + p.Ward : '')}`;
           popup += `<br><b>Tọa độ:</b> ${p.X || ''}, ${p.Y || ''}`;
           ["2020", "2022", "2023"].forEach(y => {
             let val = p[`T10_${y}_`] || p[`T11_${y}_`] || p[`T10.${y}`] || p[`T11.${y}`] || p[`'T10.${y}'`] || p[`'T11.${y}'`];
